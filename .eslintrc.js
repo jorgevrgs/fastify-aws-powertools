@@ -4,12 +4,11 @@ module.exports = {
     node: true
   },
   extends: 'standard-with-typescript',
-  overrides: [
-  ],
+  overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  rules: {
-  }
+  plugins: ['mocha'],
+  rules: {}
 }
