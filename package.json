@@ -29,7 +29,9 @@
   "homepage": "https://github.com/jorgevrgs/fastify-aws-powertools#readme",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
+    "@types/aws-lambda": "^8.10.104",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "aws-lambda": "^1.0.7",
     "eslint": "^8.23.1",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -38,6 +40,9 @@
     "typescript": "^4.8.3"
   },
   "peerDependencies": {
+    "@aws-lambda-powertools/logger": "^1.2.1",
+    "@aws-lambda-powertools/metrics": "^1.2.1",
+    "@aws-lambda-powertools/tracer": "^1.2.1",
     "aws-xray-sdk-core": "^3.3.7",
     "fastify": "^4.6.0"
   }
