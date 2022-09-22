@@ -65,7 +65,7 @@ import fastifyAwsPowertool, {
 } from 'fastify-aws-powertools';
 
 const server = fastify({
-  logger: true,
+  logger: false,
 });
 
 server.register(fastifyAwsPowertool);

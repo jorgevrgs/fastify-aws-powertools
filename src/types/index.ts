@@ -19,6 +19,9 @@ declare module 'fastify' {
       event: APIGatewayProxyEvent;
       context: Context;
     };
+    logger?: Logger;
+    metrics?: Metrics;
+    tracer?: Tracer;
   }
 }
 
@@ -41,7 +44,7 @@ export interface TracerServiceOptions {
   captureResponse?: boolean;
 }
 
-export interface fastifyAwsPowertoolsOptions {
+export interface FastifyAwsPowertoolsOptions {
   loggerOptions?: LoggerServiceOptions;
   metricsOptions?: MetricsServiceOptions;
   tracerOptions?: TracerServiceOptions;
