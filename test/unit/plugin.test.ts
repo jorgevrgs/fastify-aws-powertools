@@ -19,12 +19,12 @@ describe('fastifyAwsPowertool unit', () => {
 
     await app.ready()
 
-    expect(app.hasDecorator('logger')).to.be.true
-    expect(app.hasDecorator('metrics')).to.be.true
-    expect(app.hasDecorator('tracer')).to.be.true
+    expect(app.hasDecorator('logger')).toBeTruthy()
+    expect(app.hasDecorator('metrics')).toBeTruthy()
+    expect(app.hasDecorator('tracer')).toBeTruthy()
 
-    expect(app.hasRequestDecorator('logger')).to.be.true
-    expect(app.hasRequestDecorator('metrics')).to.be.true
-    expect(app.hasRequestDecorator('tracer')).to.be.true
+    expect(app.hasRequestDecorator('logger')).toBeTruthy()
+    expect(app.hasRequestDecorator('metrics')).toBeTruthy()
+    expect(app.hasRequestDecorator('tracer')).toBeTruthy()
   })
 })

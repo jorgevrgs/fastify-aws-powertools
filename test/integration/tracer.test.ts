@@ -1,8 +1,6 @@
-import { expect } from 'chai'
 import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
-import Sinon from 'sinon'
-import { afterEach, beforeEach, describe, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import fastifyAwsPowertool from '../../src'
 
 describe('fastifyAwsPowertool tracer integration', () => {
@@ -14,11 +12,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
     await app.ready()
   })
 
-  afterEach(function () {
-    Sinon.restore()
-  })
-
   it('should be a function', () => {
-    expect(fastifyAwsPowertool).to.be.instanceOf(Function)
+    expect(fastifyAwsPowertool).toBeInstanceOf(Function)
   })
 })

@@ -1,9 +1,8 @@
 import { Logger } from '@aws-lambda-powertools/logger'
 import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda'
-import { expect } from 'chai'
 import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
-import { afterEach, beforeEach, describe, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import fastifyAwsPowertool from '../../src'
 
 describe('fastifyAwsPowertool logger integration', function () {
@@ -17,23 +16,33 @@ describe('fastifyAwsPowertool logger integration', function () {
 
     app = Fastify()
     logger = new Logger()
-    app.register(fp(fastifyAwsPowertool), {
-      logger
-    })
-    app.get('/', async (request, reply) => {
-      console.log(
-        'XXX -- entering handler -- XXX',
-        JSON.stringify(
-          {
-            event: request.awsLambda.event,
-            context: request.awsLambda.context
+    app
+      .register(
+        fp(fastifyAwsPowertool, {
+          name: 'powertools'
+        }),
+        {
+          logger
+        }
+      )
+      .register(
+        fp(
+          async (instance) => {
+            instance.get('/', async (request, reply) => {
+              request.logger?.info('This is an INFO log with some context')
+
+              return 'OK'
+            })
           },
-          null,
-          2
+          {
+            name: 'routes',
+            dependencies: ['powertools'],
+            decorators: {
+              request: ['logger']
+            }
+          }
         )
       )
-      request.logger?.info('This is an INFO log with some context')
-    })
     proxy = awsLambdaFastify(app)
 
     handler = async (event, context) => proxy(event, context)
@@ -78,10 +87,8 @@ describe('fastifyAwsPowertool logger integration', function () {
 
     await handler(event, context)
 
-    console.log(logger)
-
-    expect(logger).to.have.deep.nested.property(
-      'powertoolLogData.lambdaContext.awsRequestId',
+    expect(logger).toHaveProperty(
+      ['powertoolLogData', 'lambdaContext', 'awsRequestId'],
       awsRequestId
     )
   })
