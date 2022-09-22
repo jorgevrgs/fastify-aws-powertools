@@ -1,5 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { onRequestAsyncHookHandler } from 'fastify';
+import type {
+  onErrorAsyncHookHandler,
+  onRequestAsyncHookHandler,
+  onResponseAsyncHookHandler,
+} from 'fastify';
 import type { LogAttributes, LoggerOptions } from '../types';
 
 export function loggerService(target: Logger, options: LoggerOptions) {
@@ -20,7 +24,20 @@ export function loggerService(target: Logger, options: LoggerOptions) {
     });
   };
 
-  const onResponseOrError = async (): Promise<void> => {
+  const onResponseHook: onResponseAsyncHookHandler =
+    async (): Promise<void> => {
+      if (options && options.clearState === true) {
+        loggers.forEach((logger: Logger, index: number) => {
+          Logger.injectLambdaContextAfterOrOnError(
+            logger,
+            persistentAttributes[index],
+            options
+          );
+        });
+      }
+    };
+
+  const onErrorHook: onErrorAsyncHookHandler = async (): Promise<void> => {
     if (options && options.clearState === true) {
       loggers.forEach((logger: Logger, index: number) => {
         Logger.injectLambdaContextAfterOrOnError(
@@ -34,7 +51,7 @@ export function loggerService(target: Logger, options: LoggerOptions) {
 
   return {
     onRequest: onRequestHook,
-    onResponse: onResponseOrError,
-    onError: onResponseOrError,
+    onResponse: onResponseHook,
+    onError: onErrorHook,
   };
 }
