@@ -39,6 +39,7 @@ export class ExampleStack extends Stack {
       externalModules: [
         'fastify',
         '@fastify/aws-lambda',
+        'fastify-aws-powertools',
         '@aws-lambda-powertools/logger',
         '@aws-lambda-powertools/metrics',
         '@aws-lambda-powertools/tracer',
