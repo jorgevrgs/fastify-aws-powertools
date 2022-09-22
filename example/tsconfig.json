@@ -2,9 +2,8 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "commonjs",
-    "lib": [
-      "es2018"
-    ],
+    "lib": ["es2018"],
+    "esModuleInterop": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -19,12 +18,12 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"],
+    "paths": {
+      "fastify-aws-powertools": ["../src"]
+    }
   },
-  "exclude": [
-    "node_modules",
-    "cdk.out"
-  ]
+  "exclude": ["node_modules", "cdk.out"],
+  "include": ["**/*.ts"]
 }
