@@ -33,6 +33,7 @@
     "@types/aws-lambda": "^8.10.104",
     "@types/chai": "^4.3.3",
     "@types/mocha": "^9.1.1",
+    "@types/sinon": "^10.0.13",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "aws-lambda": "^1.0.7",
     "chai": "^4.3.6",

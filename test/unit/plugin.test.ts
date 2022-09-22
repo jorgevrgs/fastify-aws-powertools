@@ -3,7 +3,7 @@ import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 import fastifyAwsPowertool from '../../src'
 
-describe('fastifyAwsPowertool', () => {
+describe('fastifyAwsPowertool unit', () => {
   let app: FastifyInstance
 
   beforeEach(async () => {
