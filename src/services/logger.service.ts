@@ -1,19 +1,19 @@
-import { Logger } from '@aws-lambda-powertools/logger';
+import { Logger } from '@aws-lambda-powertools/logger'
 import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
-  onResponseAsyncHookHandler,
-} from 'fastify';
-import type { LogAttributes, LoggerServiceOptions } from '../types';
+  onResponseAsyncHookHandler
+} from 'fastify'
+import type { LogAttributes, LoggerServiceOptions } from '../types'
 
 export function loggerService(target: Logger, options?: LoggerServiceOptions) {
-  const loggers = target instanceof Array ? target : [target];
-  const persistentAttributes: LogAttributes[] = [];
+  const loggers = target instanceof Array ? target : [target]
+  const persistentAttributes: LogAttributes[] = []
 
   const onRequestHook: onRequestAsyncHookHandler = async (request) => {
     loggers.forEach((logger: Logger) => {
       if (options?.clearState === true) {
-        persistentAttributes.push({ ...logger.getPersistentLogAttributes() });
+        persistentAttributes.push({ ...logger.getPersistentLogAttributes() })
       }
 
       Logger.injectLambdaContextBefore(
@@ -21,9 +21,9 @@ export function loggerService(target: Logger, options?: LoggerServiceOptions) {
         request.awsLambda.event,
         request.awsLambda.context,
         options
-      );
-    });
-  };
+      )
+    })
+  }
 
   const onResponseHook: onResponseAsyncHookHandler =
     async (): Promise<void> => {
@@ -33,10 +33,10 @@ export function loggerService(target: Logger, options?: LoggerServiceOptions) {
             logger,
             persistentAttributes[index],
             options
-          );
-        });
+          )
+        })
       }
-    };
+    }
 
   const onErrorHook: onErrorAsyncHookHandler = async (): Promise<void> => {
     if (options && options.clearState === true) {
@@ -45,14 +45,14 @@ export function loggerService(target: Logger, options?: LoggerServiceOptions) {
           logger,
           persistentAttributes[index],
           options
-        );
-      });
+        )
+      })
     }
-  };
+  }
 
   return {
     onRequest: onRequestHook,
     onResponse: onResponseHook,
-    onError: onErrorHook,
-  };
+    onError: onErrorHook
+  }
 }

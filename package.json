@@ -45,6 +45,7 @@
     "eslint-plugin-promise": "^6.0.1",
     "fastify-plugin": "^4.2.1",
     "mocha": "^10.0.0",
+    "prettier": "^2.7.1",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.1",
