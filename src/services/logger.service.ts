@@ -6,7 +6,10 @@ import type {
 } from 'fastify'
 import type { LogAttributes, LoggerServiceOptions } from '../types'
 
-export function loggerService(target: Logger, options?: LoggerServiceOptions) {
+export function loggerService(
+  target: Logger | Logger[],
+  options?: LoggerServiceOptions
+) {
   const loggers = target instanceof Array ? target : [target]
   const persistentAttributes: LogAttributes[] = []
 

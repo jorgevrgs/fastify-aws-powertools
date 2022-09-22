@@ -48,7 +48,7 @@ export interface FastifyAwsPowertoolsOptions {
   loggerOptions?: LoggerServiceOptions
   metricsOptions?: MetricsServiceOptions
   tracerOptions?: TracerServiceOptions
-  logger?: Logger
-  metrics?: Metrics
+  logger?: Logger | Logger[]
+  metrics?: Metrics | Metrics[]
   tracer?: Tracer
 }
