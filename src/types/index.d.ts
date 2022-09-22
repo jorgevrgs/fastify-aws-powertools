@@ -1,3 +1,6 @@
+import type { Logger } from '@aws-lambda-powertools/logger';
+import type { Metrics } from '@aws-lambda-powertools/metrics';
+import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
 
 /** Requires @fastify/aws-lambda
@@ -19,7 +22,7 @@ declare module 'fastify' {
   }
 }
 
-export interface LoggerOptions {
+export interface LoggerServiceOptions {
   logEvent?: boolean;
   clearState?: boolean;
 }
@@ -28,18 +31,21 @@ export type LogAttributeValue = unknown;
 export type LogAttributes = { [key: string]: LogAttributeValue };
 export type Dimensions = { [key: string]: string };
 
-export interface MetricsOptions {
+export interface MetricsServiceOptions {
   throwOnEmptyMetrics?: boolean;
   defaultDimensions?: Dimensions;
   captureColdStartMetric?: boolean;
 }
 
-export interface TracerOptions {
+export interface TracerServiceOptions {
   captureResponse?: boolean;
 }
 
 export interface fastifyAwsPowertoolsOptions {
-  logger?: LoggerOptions;
-  metrics?: MetricsOptions;
-  tracer?: TracerOptions;
+  loggerOptions?: LoggerServiceOptions;
+  metricsOptions?: MetricsServiceOptions;
+  tracerOptions?: TracerServiceOptions;
+  logger?: Logger;
+  metrics?: Metrics;
+  tracer?: Tracer;
 }

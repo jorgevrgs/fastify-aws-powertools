@@ -1,3 +1,3 @@
-export * from './on-error.hook';
-export * from './on-request.hook';
-export * from './on-response.hook';
+export * from './logger.hook';
+export * from './metrics.hook';
+export * from './tracer.hook';

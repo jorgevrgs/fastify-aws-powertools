@@ -4,9 +4,9 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import type { LogAttributes, LoggerOptions } from '../types';
+import type { LogAttributes, LoggerServiceOptions } from '../types';
 
-export function loggerService(target: Logger, options: LoggerOptions) {
+export function loggerService(target: Logger, options?: LoggerServiceOptions) {
   const loggers = target instanceof Array ? target : [target];
   const persistentAttributes: LogAttributes[] = [];
 

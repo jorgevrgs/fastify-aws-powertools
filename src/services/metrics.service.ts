@@ -4,11 +4,11 @@ import {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import { MetricsOptions } from '../types';
+import { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],
-  options: MetricsOptions = {}
+  options: MetricsServiceOptions = {}
 ) {
   const metricsInstances = target instanceof Array ? target : [target];
 

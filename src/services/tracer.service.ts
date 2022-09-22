@@ -5,9 +5,9 @@ import {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import type { TracerOptions } from '../types';
+import type { TracerServiceOptions } from '../types';
 
-export function tracerService(target: Tracer, options: TracerOptions) {
+export function tracerService(target: Tracer, options: TracerServiceOptions) {
   let lambdaSegment: Subsegment | Segment;
 
   const open = (): void => {
