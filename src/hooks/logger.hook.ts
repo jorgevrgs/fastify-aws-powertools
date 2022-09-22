@@ -3,12 +3,12 @@ import type { FastifyPluginAsync } from 'fastify';
 import { loggerService } from '../services';
 import type { fastifyAwsPowertoolsOptions } from '../types';
 
-export const onRequestHook: FastifyPluginAsync<
+export const loggerHook: FastifyPluginAsync<
   fastifyAwsPowertoolsOptions
 > = async (fastify, opts) => {
   let logger = opts.logger as Logger;
 
-  if (typeof opts.logger === 'undefined') {
+  if (typeof logger === 'undefined') {
     logger = new Logger();
   }
 
