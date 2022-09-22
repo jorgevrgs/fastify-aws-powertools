@@ -1,6 +1,6 @@
-import { expect } from 'chai'
 import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
+import { beforeEach, describe, expect, it } from 'vitest'
 import fastifyAwsPowertool from '../../src'
 
 describe('fastifyAwsPowertool unit', () => {

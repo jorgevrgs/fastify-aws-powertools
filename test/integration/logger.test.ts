@@ -3,7 +3,7 @@ import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda'
 import { expect } from 'chai'
 import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
-import Sinon from 'sinon'
+import { afterEach, beforeEach, describe, it, vi } from 'vitest'
 import fastifyAwsPowertool from '../../src'
 
 describe('fastifyAwsPowertool logger integration', function () {
@@ -12,10 +12,9 @@ describe('fastifyAwsPowertool logger integration', function () {
   let handler: PromiseHandler
   let logger: Logger
 
-  // https://sinonjs.org/releases/latest/fake-timers/
-  let clock = Sinon.useFakeTimers()
-
   beforeEach(async function () {
+    vi.useFakeTimers()
+
     app = Fastify()
     logger = new Logger()
     app.register(fp(fastifyAwsPowertool), {
@@ -42,7 +41,9 @@ describe('fastifyAwsPowertool logger integration', function () {
   })
 
   afterEach(async function () {
-    Sinon.restore()
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+
     await app.close()
   })
 
@@ -50,44 +51,38 @@ describe('fastifyAwsPowertool logger integration', function () {
     expect(fastifyAwsPowertool).to.be.instanceOf(Function)
   })
 
-  describe('Logger context', function () {
-    describe('Feature: add context data', function () {
-      it('when a logger object is passed, it adds the context to the logger instance', async function () {
-        const event = {
-          httpMethod: 'GET',
-          path: '/'
-        }
+  it('when a logger object is passed, it adds the context to the logger instance', async function () {
+    const event = {
+      httpMethod: 'GET',
+      path: '/'
+    }
 
-        const getRandomInt = (): number =>
-          Math.floor(Math.random() * 1000000000)
+    const getRandomInt = (): number => Math.floor(Math.random() * 1000000000)
 
-        const awsRequestId = getRandomInt().toString()
-        const context = {
-          callbackWaitsForEmptyEventLoop: true,
-          functionVersion: '$LATEST',
-          functionName: 'foo-bar-function',
-          memoryLimitInMB: '128',
-          logGroupName: '/aws/lambda/foo-bar-function',
-          logStreamName:
-            '2021/03/09/[$LATEST]abcdef123456abcdef123456abcdef123456',
-          invokedFunctionArn:
-            'arn:aws:lambda:eu-west-1:123456789012:function:foo-bar-function',
-          awsRequestId: awsRequestId,
-          getRemainingTimeInMillis: () => 1234,
-          done: () => console.log('Done!'),
-          fail: () => console.log('Failed!'),
-          succeed: () => console.log('Succeeded!')
-        }
+    const awsRequestId = getRandomInt().toString()
+    const context = {
+      callbackWaitsForEmptyEventLoop: true,
+      functionVersion: '$LATEST',
+      functionName: 'foo-bar-function',
+      memoryLimitInMB: '128',
+      logGroupName: '/aws/lambda/foo-bar-function',
+      logStreamName: '2021/03/09/[$LATEST]abcdef123456abcdef123456abcdef123456',
+      invokedFunctionArn:
+        'arn:aws:lambda:eu-west-1:123456789012:function:foo-bar-function',
+      awsRequestId: awsRequestId,
+      getRemainingTimeInMillis: () => 1234,
+      done: () => console.log('Done!'),
+      fail: () => console.log('Failed!'),
+      succeed: () => console.log('Succeeded!')
+    }
 
-        await handler(event, context)
+    await handler(event, context)
 
-        console.log(logger)
+    console.log(logger)
 
-        expect(logger).to.have.deep.nested.property(
-          'powertoolLogData.lambdaContext.awsRequestId',
-          awsRequestId
-        )
-      })
-    })
+    expect(logger).to.have.deep.nested.property(
+      'powertoolLogData.lambdaContext.awsRequestId',
+      awsRequestId
+    )
   })
 })
