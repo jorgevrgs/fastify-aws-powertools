@@ -9,6 +9,5 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: ['mocha'],
   rules: {}
 }
