@@ -7,7 +7,7 @@ import {
 } from 'fastify';
 import type { TracerServiceOptions } from '../types';
 
-export function tracerService(target: Tracer, options: TracerServiceOptions) {
+export function tracerService(target: Tracer, options?: TracerServiceOptions) {
   let lambdaSegment: Subsegment | Segment;
 
   const open = (): void => {

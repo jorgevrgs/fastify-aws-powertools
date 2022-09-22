@@ -12,9 +12,10 @@ export function loggerService(target: Logger, options?: LoggerServiceOptions) {
 
   const onRequestHook: onRequestAsyncHookHandler = async (request) => {
     loggers.forEach((logger: Logger) => {
-      if (options && options.clearState === true) {
+      if (options?.clearState === true) {
         persistentAttributes.push({ ...logger.getPersistentLogAttributes() });
       }
+
       Logger.injectLambdaContextBefore(
         logger,
         request.awsLambda.event,
