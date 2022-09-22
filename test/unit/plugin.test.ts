@@ -19,8 +19,6 @@ describe('fastifyAwsPowertool', () => {
 
     await app.ready()
 
-    console.log(app.printPlugins())
-
     expect(app.hasDecorator('logger')).to.be.true
     expect(app.hasDecorator('metrics')).to.be.true
     expect(app.hasDecorator('tracer')).to.be.true
