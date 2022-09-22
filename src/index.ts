@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from 'fastify';
 import { loggerHook, metricsHook, tracerHook } from './hooks';
 import { fastifyAwsPowertoolsOptions } from './types';
 
-export const fastifyAwsPowertools: FastifyPluginAsync<
+const fastifyAwsPowertools: FastifyPluginAsync<
   fastifyAwsPowertoolsOptions
 > = async (fastify, opts) => {
   fastify
@@ -10,3 +10,5 @@ export const fastifyAwsPowertools: FastifyPluginAsync<
     .register(metricsHook, opts)
     .register(tracerHook, opts);
 };
+
+export default fastifyAwsPowertools;
