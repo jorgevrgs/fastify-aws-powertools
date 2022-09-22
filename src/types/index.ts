@@ -1,7 +1,7 @@
-import type { Logger } from '@aws-lambda-powertools/logger'
-import type { Metrics } from '@aws-lambda-powertools/metrics'
-import type { Tracer } from '@aws-lambda-powertools/tracer'
-import type { APIGatewayProxyEvent, Context } from 'aws-lambda'
+import type { Logger } from '@aws-lambda-powertools/logger';
+import type { Metrics } from '@aws-lambda-powertools/metrics';
+import type { Tracer } from '@aws-lambda-powertools/tracer';
+import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
 
 /** Requires @fastify/aws-lambda
  * @example
@@ -16,39 +16,39 @@ import type { APIGatewayProxyEvent, Context } from 'aws-lambda'
 declare module 'fastify' {
   interface FastifyRequest {
     awsLambda: {
-      event: APIGatewayProxyEvent
-      context: Context
-    }
-    logger?: Logger
-    metrics?: Metrics
-    tracer?: Tracer
+      event: APIGatewayProxyEvent;
+      context: Context;
+    };
+    logger?: Logger;
+    metrics?: Metrics;
+    tracer?: Tracer;
   }
 }
 
 export interface LoggerServiceOptions {
-  logEvent?: boolean
-  clearState?: boolean
+  logEvent?: boolean;
+  clearState?: boolean;
 }
 
-export type LogAttributeValue = unknown
-export type LogAttributes = { [key: string]: LogAttributeValue }
-export type Dimensions = { [key: string]: string }
+export type LogAttributeValue = unknown;
+export type LogAttributes = { [key: string]: LogAttributeValue };
+export type Dimensions = { [key: string]: string };
 
 export interface MetricsServiceOptions {
-  throwOnEmptyMetrics?: boolean
-  defaultDimensions?: Dimensions
-  captureColdStartMetric?: boolean
+  throwOnEmptyMetrics?: boolean;
+  defaultDimensions?: Dimensions;
+  captureColdStartMetric?: boolean;
 }
 
 export interface TracerServiceOptions {
-  captureResponse?: boolean
+  captureResponse?: boolean;
 }
 
 export interface FastifyAwsPowertoolsOptions {
-  loggerOptions?: LoggerServiceOptions
-  metricsOptions?: MetricsServiceOptions
-  tracerOptions?: TracerServiceOptions
-  logger?: Logger | Logger[]
-  metrics?: Metrics | Metrics[]
-  tracer?: Tracer
+  loggerOptions?: LoggerServiceOptions;
+  metricsOptions?: MetricsServiceOptions;
+  tracerOptions?: TracerServiceOptions;
+  logger?: Logger | Logger[];
+  metrics?: Metrics | Metrics[];
+  tracer?: Tracer;
 }

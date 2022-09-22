@@ -1,74 +1,74 @@
-import { Logger } from '@aws-lambda-powertools/logger'
-import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda'
-import Fastify, { FastifyInstance } from 'fastify'
-import fp from 'fastify-plugin'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import fastifyAwsPowertool from '../../src'
+import { Logger } from '@aws-lambda-powertools/logger';
+import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda';
+import Fastify, { FastifyInstance } from 'fastify';
+import fp from 'fastify-plugin';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import fastifyAwsPowertool from '../../src';
 
 describe('fastifyAwsPowertool logger integration', function () {
-  let app: FastifyInstance
-  let proxy: PromiseHandler
-  let handler: PromiseHandler
-  let logger: Logger
+  let app: FastifyInstance;
+  let proxy: PromiseHandler;
+  let handler: PromiseHandler;
+  let logger: Logger;
 
   beforeEach(async function () {
-    vi.useFakeTimers()
+    vi.useFakeTimers();
 
-    app = Fastify()
-    logger = new Logger()
+    app = Fastify();
+    logger = new Logger();
     app
       .register(
         fp(fastifyAwsPowertool, {
-          name: 'powertools'
+          name: 'powertools',
         }),
         {
-          logger
-        }
+          logger,
+        },
       )
       .register(
         fp(
           async (instance) => {
             instance.get('/', async (request, reply) => {
-              request.logger?.info('This is an INFO log with some context')
+              request.logger?.info('This is an INFO log with some context');
 
-              return 'OK'
-            })
+              return 'OK';
+            });
           },
           {
             name: 'routes',
             dependencies: ['powertools'],
             decorators: {
-              request: ['logger']
-            }
-          }
-        )
-      )
-    proxy = awsLambdaFastify(app)
+              request: ['logger'],
+            },
+          },
+        ),
+      );
+    proxy = awsLambdaFastify(app);
 
-    handler = async (event, context) => proxy(event, context)
-    await app.ready()
-  })
+    handler = async (event, context) => proxy(event, context);
+    await app.ready();
+  });
 
   afterEach(async function () {
-    vi.useRealTimers()
-    vi.restoreAllMocks()
+    vi.useRealTimers();
+    vi.restoreAllMocks();
 
-    await app.close()
-  })
+    await app.close();
+  });
 
   it('should be a function', function () {
-    expect(fastifyAwsPowertool).to.be.instanceOf(Function)
-  })
+    expect(fastifyAwsPowertool).to.be.instanceOf(Function);
+  });
 
   it('when a logger object is passed, it adds the context to the logger instance', async function () {
     const event = {
       httpMethod: 'GET',
-      path: '/'
-    }
+      path: '/',
+    };
 
-    const getRandomInt = (): number => Math.floor(Math.random() * 1000000000)
+    const getRandomInt = (): number => Math.floor(Math.random() * 1000000000);
 
-    const awsRequestId = getRandomInt().toString()
+    const awsRequestId = getRandomInt().toString();
     const context = {
       callbackWaitsForEmptyEventLoop: true,
       functionVersion: '$LATEST',
@@ -82,14 +82,14 @@ describe('fastifyAwsPowertool logger integration', function () {
       getRemainingTimeInMillis: () => 1234,
       done: () => console.log('Done!'),
       fail: () => console.log('Failed!'),
-      succeed: () => console.log('Succeeded!')
-    }
+      succeed: () => console.log('Succeeded!'),
+    };
 
-    await handler(event, context)
+    await handler(event, context);
 
     expect(logger).toHaveProperty(
       ['powertoolLogData', 'lambdaContext', 'awsRequestId'],
-      awsRequestId
-    )
-  })
-})
+      awsRequestId,
+    );
+  });
+});

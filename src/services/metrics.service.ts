@@ -1,52 +1,52 @@
-import type { Metrics } from '@aws-lambda-powertools/metrics'
+import type { Metrics } from '@aws-lambda-powertools/metrics';
 import {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
-  onResponseAsyncHookHandler
-} from 'fastify'
-import { MetricsServiceOptions } from '../types'
+  onResponseAsyncHookHandler,
+} from 'fastify';
+import { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],
-  options: MetricsServiceOptions = {}
+  options: MetricsServiceOptions = {},
 ) {
-  const metricsInstances = target instanceof Array ? target : [target]
+  const metricsInstances = target instanceof Array ? target : [target];
 
   const onRequestHook: onRequestAsyncHookHandler = async (request) => {
     metricsInstances.forEach((metrics: Metrics) => {
-      metrics.setFunctionName(request.awsLambda.context.functionName)
+      metrics.setFunctionName(request.awsLambda.context.functionName);
       const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
-        options
+        options;
 
       if (throwOnEmptyMetrics !== undefined) {
-        metrics.throwOnEmptyMetrics()
+        metrics.throwOnEmptyMetrics();
       }
 
       if (defaultDimensions !== undefined) {
-        metrics.setDefaultDimensions(defaultDimensions)
+        metrics.setDefaultDimensions(defaultDimensions);
       }
 
       if (captureColdStartMetric !== undefined) {
-        metrics.captureColdStartMetric()
+        metrics.captureColdStartMetric();
       }
-    })
-  }
+    });
+  };
 
   const onResponseHook: onResponseAsyncHookHandler = async () => {
     metricsInstances.forEach((metrics: Metrics) => {
-      metrics.publishStoredMetrics()
-    })
-  }
+      metrics.publishStoredMetrics();
+    });
+  };
 
   const onErrorHook: onErrorAsyncHookHandler = async () => {
     metricsInstances.forEach((metrics: Metrics) => {
-      metrics.publishStoredMetrics()
-    })
-  }
+      metrics.publishStoredMetrics();
+    });
+  };
 
   return {
     onRequest: onRequestHook,
     onResponse: onResponseHook,
-    onError: onErrorHook
-  }
+    onError: onErrorHook,
+  };
 }

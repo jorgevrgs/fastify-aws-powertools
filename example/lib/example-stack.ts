@@ -66,7 +66,7 @@ export class ExampleStack extends Stack {
         awsSdkConnectionReuse: true,
         entry: './src/index.ts',
         ...functionSettings,
-      }
+      },
     );
 
     productsTable.grantReadData(productsFunction);
@@ -87,7 +87,7 @@ export class ExampleStack extends Stack {
     const products = api.root.addResource('products');
     products.addMethod(
       'GET',
-      new aws_apigateway.LambdaIntegration(productsFunction)
+      new aws_apigateway.LambdaIntegration(productsFunction),
     );
 
     new CfnOutput(this, 'ApiURL', {
