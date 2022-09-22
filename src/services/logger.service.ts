@@ -25,20 +25,19 @@ export function loggerService(target: Logger, options?: LoggerServiceOptions) {
     })
   }
 
-  const onResponseHook: onResponseAsyncHookHandler =
-    async (): Promise<void> => {
-      if (options && options.clearState === true) {
-        loggers.forEach((logger: Logger, index: number) => {
-          Logger.injectLambdaContextAfterOrOnError(
-            logger,
-            persistentAttributes[index],
-            options
-          )
-        })
-      }
+  const onResponseHook: onResponseAsyncHookHandler = async () => {
+    if (options && options.clearState === true) {
+      loggers.forEach((logger: Logger, index: number) => {
+        Logger.injectLambdaContextAfterOrOnError(
+          logger,
+          persistentAttributes[index],
+          options
+        )
+      })
     }
+  }
 
-  const onErrorHook: onErrorAsyncHookHandler = async (): Promise<void> => {
+  const onErrorHook: onErrorAsyncHookHandler = async () => {
     if (options && options.clearState === true) {
       loggers.forEach((logger: Logger, index: number) => {
         Logger.injectLambdaContextAfterOrOnError(
