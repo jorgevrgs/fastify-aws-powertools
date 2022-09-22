@@ -4,5 +4,6 @@
     "target": "ESNext",
     "module": "esnext",
     "outDir": "dist/esm"
-  }
+  },
+  "include": ["src/**/*"]
 }

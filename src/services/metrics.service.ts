@@ -8,7 +8,7 @@ import { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],
-  options: MetricsServiceOptions = {}
+  options: MetricsServiceOptions = {},
 ) {
   const metricsInstances = target instanceof Array ? target : [target];
 

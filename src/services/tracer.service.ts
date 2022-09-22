@@ -13,7 +13,7 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
   const open = (): void => {
     lambdaSegment = target.getSegment();
     const handlerSegment = lambdaSegment.addNewSubsegment(
-      `## ${process.env._HANDLER}`
+      `## ${process.env._HANDLER}`,
     );
     target.setSegment(handlerSegment);
   };

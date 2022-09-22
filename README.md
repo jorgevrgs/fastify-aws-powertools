@@ -78,7 +78,7 @@ server.get('/', async (request, reply) => {
   request.metrics.addMetric('successfulBooking', MetricUnits.Count, 1);
   request.metrics.addMetadata(
     'bookingId',
-    '7051cd10-6283-11ec-90d6-0242ac120003'
+    '7051cd10-6283-11ec-90d6-0242ac120003',
   );
   request.metrics.publishStoredMetrics();
 
