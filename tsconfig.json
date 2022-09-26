@@ -5,7 +5,8 @@
     "resolveJsonModule": true,
     "outDir": "dist",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "declarationDir": "dist/types"
   },
   "exclude": ["node_modules", "dist"]
 }

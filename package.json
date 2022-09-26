@@ -11,8 +11,9 @@
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/types",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "tsc --project tsconfig.mjs.json & tsc --project tsconfig.cjs.json",
     "lint": "eslint src/**/*.ts",
     "test": "vitest",
