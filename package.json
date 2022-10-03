@@ -5,7 +5,8 @@
   "exports": {
     "node": {
       "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "import": "./dist/esm/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "main": "./dist/cjs/index.js",
