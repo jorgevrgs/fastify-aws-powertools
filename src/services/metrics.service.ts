@@ -1,5 +1,5 @@
 import type { Metrics } from '@aws-lambda-powertools/metrics';
-import {
+import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,

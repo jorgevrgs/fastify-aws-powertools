@@ -1,6 +1,6 @@
 import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { Segment, Subsegment } from 'aws-xray-sdk-core';
-import {
+import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
