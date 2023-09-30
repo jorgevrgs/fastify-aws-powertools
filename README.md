@@ -1,5 +1,7 @@
 # fastify-aws-powertools
 
+[![NPM Version](https://img.shields.io/npm/v/fastify-aws-powertools.svg)](https://npmjs.org/package/fastify-aws-powertools) [![CI](https://github.com/jorgevrgs/fastify-aws-powertools/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jorgevrgs/fastify-aws-powertools/actions/workflows/tests.yml)
+
 ## Introduction
 
 Implementation of a Fastify plugin of [AWS Lambda Powertools for Typescript](https://awslabs.github.io/aws-lambda-powertools-typescript/latest/) to take advantage of Logger, Metrics, and Tracer services for [AWS Lambda](https://aws.amazon.com/lambda/). Inspired by Middy middleware created by AWS Lambda Powertools team.
