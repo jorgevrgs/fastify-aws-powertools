@@ -1,4 +1,4 @@
-# fastify-aws-powertools **[In Development]**
+# fastify-aws-powertools
 
 ## Introduction
 
