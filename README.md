@@ -31,7 +31,14 @@ import { FastifyASyncPlugin } from 'fastify';
 export const plugin: FastifyASyncPlugin = (fastify) => {
   const options: FastifyAwsPowertoolsOptions = {
     loggerServiceOptions: {
+      logEvent: true,
+      clearState: true,
+    },
+    metricsOptions: {
       captureColdStartMetric: true,
+    },
+    tracerOptions: {
+      captureResponse: true,
     },
   };
   fastify.register(fastifyAwsPowertool, options);
