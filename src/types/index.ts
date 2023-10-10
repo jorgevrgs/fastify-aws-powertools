@@ -1,7 +1,11 @@
 import type { Logger } from '@aws-lambda-powertools/logger';
 import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
-import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
+import type {
+  APIGatewayProxyEvent,
+  APIGatewayProxyEventV2,
+  Context,
+} from 'aws-lambda';
 
 /** Requires @fastify/aws-lambda
  * @example
@@ -16,7 +20,7 @@ import type { APIGatewayProxyEvent, Context } from 'aws-lambda';
 declare module 'fastify' {
   interface FastifyRequest {
     awsLambda: {
-      event: APIGatewayProxyEvent;
+      event: APIGatewayProxyEvent | APIGatewayProxyEventV2;
       context: Context;
     };
     logger?: Logger;
