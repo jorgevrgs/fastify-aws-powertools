@@ -10,38 +10,47 @@ export function metricsService(
   target: Metrics | Metrics[],
   options: MetricsServiceOptions = {},
 ) {
-  const metricsInstances = target instanceof Array ? target : [target];
+  const metricsInstances = Array.isArray(target) ? target : [target];
 
-  const onRequestHook: onRequestAsyncHookHandler = async (request) => {
+  const onRequestHook: onRequestAsyncHookHandler = async (request, reply) => {
     metricsInstances.forEach((metrics: Metrics) => {
       metrics.setFunctionName(request.awsLambda.context.functionName);
-      const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
-        options;
+      const {
+        throwOnEmptyMetrics,
+        defaultDimensions = { framework: 'fastify' },
+        captureColdStartMetric,
+      } = options;
 
-      if (throwOnEmptyMetrics !== undefined) {
+      if (throwOnEmptyMetrics) {
         metrics.throwOnEmptyMetrics();
       }
 
-      if (defaultDimensions !== undefined) {
+      if (defaultDimensions) {
         metrics.setDefaultDimensions(defaultDimensions);
       }
 
-      if (captureColdStartMetric !== undefined) {
+      if (captureColdStartMetric) {
         metrics.captureColdStartMetric();
       }
     });
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async () => {
-    metricsInstances.forEach((metrics: Metrics) => {
+  const onResponseOrErrorHandler = () => {
+    metricsInstances.forEach((metrics) => {
       metrics.publishStoredMetrics();
     });
   };
 
-  const onErrorHook: onErrorAsyncHookHandler = async () => {
-    metricsInstances.forEach((metrics: Metrics) => {
-      metrics.publishStoredMetrics();
-    });
+  const onResponseHook: onResponseAsyncHookHandler = async (request, reply) => {
+    onResponseOrErrorHandler();
+  };
+
+  const onErrorHook: onErrorAsyncHookHandler = async (
+    request,
+    reply,
+    error,
+  ) => {
+    onResponseOrErrorHandler();
   };
 
   return {

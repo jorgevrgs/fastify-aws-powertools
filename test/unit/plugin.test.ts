@@ -1,4 +1,5 @@
-import Fastify, { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
+import Fastify from 'fastify';
 import fp from 'fastify-plugin';
 import { beforeEach, describe, expect, it } from 'vitest';
 import fastifyAwsPowertool from '../../src';

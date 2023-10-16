@@ -6,7 +6,7 @@ import type {
 import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/types';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
-import type { HandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/types';
+import type { CaptureLambdaHandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/types';
 import type {
   APIGatewayProxyEvent,
   APIGatewayProxyEventV2,
@@ -44,3 +44,26 @@ export type {
   MetricsServiceOptions,
   TracerServiceOptions,
 };
+
+export interface MetricRecords {
+  _aws: Aws;
+  service: string;
+  function_name: string;
+  ColdStart: number;
+}
+
+export interface Aws {
+  Timestamp: number;
+  CloudWatchMetrics: CloudWatchMetric[];
+}
+
+export interface CloudWatchMetric {
+  Namespace: string;
+  Dimensions: Array<string[]>;
+  Metrics: Metric[];
+}
+
+export interface Metric {
+  Name: string;
+  Unit: string;
+}
