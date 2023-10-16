@@ -2,14 +2,14 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@aws-lambda-powertools/logger':
-    specifier: ^1.2.1
-    version: 1.2.1
+    specifier: ^1.14.0
+    version: 1.14.0
   '@aws-lambda-powertools/metrics':
-    specifier: ^1.2.1
-    version: 1.2.1
+    specifier: ^1.14.0
+    version: 1.14.0
   '@aws-lambda-powertools/tracer':
-    specifier: ^1.2.1
-    version: 1.2.1
+    specifier: ^1.14.0
+    version: 1.14.0
   aws-xray-sdk-core:
     specifier: ^3.3.7
     version: 3.3.7
@@ -56,7 +56,7 @@ devDependencies:
     version: 2.8.8
   ts-node:
     specifier: ^10.9.1
-    version: 10.9.1(@types/node@20.8.0)(typescript@5.2.2)
+    version: 10.9.1(@types/node@20.8.6)(typescript@5.2.2)
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -75,26 +75,39 @@ packages:
     resolution: {integrity: sha512-+kxLITfkH/G4C6N9b1kmvT4HSvqxRMtzmghwdiigqSGkRubCCRaxewBIII66DHgpXK5JhoWmTmdsBVwpEWqwvA==}
     dev: false
 
-  /@aws-lambda-powertools/logger@1.2.1:
-    resolution: {integrity: sha512-Yb9uOi49h7yOut/NujnHjTd+sP4nBMsnuxMIsNtKvBFZ2ftaPlGAfqOdevqC3ImcIXlyiypxXd1gQmEMq3uJ8Q==}
+  /@aws-lambda-powertools/logger@1.14.0:
+    resolution: {integrity: sha512-GIj2MMFwULSKtvwcQqd6BjI5gVie/I7bPYBCfSkEhBFf2CsFPs/B3xJ+E8jMiTdaQdmvE2ykwHhqVgItRaKPvA==}
+    peerDependencies:
+      '@middy/core': '>=3.x'
+    peerDependenciesMeta:
+      '@middy/core':
+        optional: true
     dependencies:
       '@aws-lambda-powertools/commons': 1.14.0
-      lodash.clonedeep: 4.5.0
       lodash.merge: 4.6.2
-      lodash.pickby: 4.6.0
     dev: false
 
-  /@aws-lambda-powertools/metrics@1.2.1:
-    resolution: {integrity: sha512-X0B0rkepFoeiq+l5AQpnOR+qT+Fr6tzc22RxhPc6IB3Lz+QNdory4i+w9ToSUEDrS0Lls77hlHNoEHeuW7H12w==}
+  /@aws-lambda-powertools/metrics@1.14.0:
+    resolution: {integrity: sha512-YWL96uMBv8Oa+0c2jbDNSwwIrOMVQt5eJLJWx8ZHl0bE9OkTvXDd0DnTbVP89MPhcAaQQQSsIretiFSLpShZiw==}
+    peerDependencies:
+      '@middy/core': '>=3.x'
+    peerDependenciesMeta:
+      '@middy/core':
+        optional: true
     dependencies:
       '@aws-lambda-powertools/commons': 1.14.0
     dev: false
 
-  /@aws-lambda-powertools/tracer@1.2.1:
-    resolution: {integrity: sha512-OPhb887RabgKYgKS2B5sAu+8o5r9VuLoz3sNyFsIp1GyCue4aswAevuGRUo0sJkJlhHvi1beTh2/QqQQzWd5iA==}
+  /@aws-lambda-powertools/tracer@1.14.0:
+    resolution: {integrity: sha512-pLn8VnyoddwiqvS59qk9c/LMcSvBuYMMYn3+sJyUA9DgxIbMazgr3cyZNnVMwNko7VKhLgBeY1lyrib40jZjhg==}
+    peerDependencies:
+      '@middy/core': '>=3.x'
+    peerDependenciesMeta:
+      '@middy/core':
+        optional: true
     dependencies:
       '@aws-lambda-powertools/commons': 1.14.0
-      aws-xray-sdk-core: 3.3.7
+      aws-xray-sdk-core: 3.5.2
     dev: false
 
   /@aws-sdk/service-error-classification@3.374.0:
@@ -110,6 +123,14 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.3.4
+      tslib: 2.6.2
+    dev: false
+
+  /@aws-sdk/types@3.428.0:
+    resolution: {integrity: sha512-4T0Ps2spjg3qbWE6ZK13Vd3FnzpfliaiotqjxUK5YhjDrKXeT36HJp46JhDupElQuHtTkpdiJOSYk2lvY2H4IA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.3.5
       tslib: 2.6.2
     dev: false
 
@@ -270,6 +291,13 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@smithy/types@2.3.5:
+    resolution: {integrity: sha512-ehyDt8M9hehyxrLQGoA1BGPou8Js1Ocoh5M0ngDhJMqbFmNK5N6Xhr9/ZExWkyIW8XcGkiMPq3ZUEE0ScrhbuQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
     dev: true
@@ -320,6 +348,12 @@ packages:
 
   /@types/node@20.8.0:
     resolution: {integrity: sha512-LzcWltT83s1bthcvjBmiBvGJiiUe84NWRHkw+ZV6Fr41z2FbIzvc815dk2nQ3RAKMuN2fkenM/z3Xv2QzEpYxQ==}
+
+  /@types/node@20.8.6:
+    resolution: {integrity: sha512-eWO4K2Ji70QzKUqRy6oyJWUeB7+g2cRagT3T/nxYibYcT4y2BDL8lqolRXjTHmkZCdJfIPaY73KbJAZmcryxTQ==}
+    dependencies:
+      undici-types: 5.25.3
+    dev: true
 
   /@types/semver@7.5.3:
     resolution: {integrity: sha512-OxepLK9EuNEIPxWNME+C6WwbRAOOI2o2BaQEGzz5Lu2e4Z5eDnEo+/aVEDMIXywoJitJ7xWd641wrGLZdtwRyw==}
@@ -683,6 +717,18 @@ packages:
       atomic-batcher: 1.0.2
       cls-hooked: 4.2.2
       semver: 5.7.2
+    dev: false
+
+  /aws-xray-sdk-core@3.5.2:
+    resolution: {integrity: sha512-sboSTXIS0tOKYqQ5zrWX6p6k4Mrec84BNeJPHnRakcjzgsU5j8xBB5kim3BVVv+pINGLVpOD568cJzH0GI/HqQ==}
+    engines: {node: '>= 14.x'}
+    dependencies:
+      '@aws-sdk/service-error-classification': 3.374.0
+      '@aws-sdk/types': 3.428.0
+      '@types/cls-hooked': 4.3.6
+      atomic-batcher: 1.0.2
+      cls-hooked: 4.2.2
+      semver: 7.5.4
     dev: false
 
   /balanced-match@1.0.2:
@@ -1948,16 +1994,8 @@ packages:
       p-locate: 5.0.0
     dev: true
 
-  /lodash.clonedeep@4.5.0:
-    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
-    dev: false
-
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-
-  /lodash.pickby@4.6.0:
-    resolution: {integrity: sha512-AZV+GsS/6ckvPOVQPXSiFFacKvKB4kOQu6ynt9wz0F3LO4R9Ij4K1ddYsIytDpSgLz88JHd9P+oaLeej5/Sl7Q==}
-    dev: false
 
   /loupe@2.3.6:
     resolution: {integrity: sha512-RaPMZKiMy8/JruncMU5Bt6na1eftNoo++R4Y+N2FrxkDVTrGvcyzFTsaGif4QTeKESheMGegbhw6iUAq+5A8zA==}
@@ -1970,7 +2008,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
-    dev: true
 
   /make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
@@ -2367,7 +2404,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /set-cookie-parser@2.6.0:
     resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
@@ -2546,7 +2582,7 @@ packages:
       typescript: 5.2.2
     dev: true
 
-  /ts-node@10.9.1(@types/node@20.8.0)(typescript@5.2.2):
+  /ts-node@10.9.1(@types/node@20.8.6)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -2565,7 +2601,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.8.0
+      '@types/node': 20.8.6
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -2658,6 +2694,10 @@ packages:
       has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
+    dev: true
+
+  /undici-types@5.25.3:
+    resolution: {integrity: sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==}
     dev: true
 
   /uri-js@4.4.1:
@@ -2824,7 +2864,6 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
-    dev: true
 
   /yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
