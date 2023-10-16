@@ -1,7 +1,9 @@
 import { Metrics } from '@aws-lambda-powertools/metrics';
-import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda';
+import type { PromiseHandler } from '@fastify/aws-lambda';
+import awsLambdaFastify from '@fastify/aws-lambda';
 import { randomUUID } from 'crypto';
-import Fastify, { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
+import Fastify from 'fastify';
 import fp from 'fastify-plugin';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
@@ -91,7 +93,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
         context,
       );
 
-      const loggedData: any[] = [
+      const loggedData = [
         JSON.parse(consoleSpy.mock.calls[0][0]),
         JSON.parse(consoleSpy.mock.calls[1][0]),
       ];

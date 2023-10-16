@@ -1,4 +1,4 @@
-import { Logger } from '@aws-lambda-powertools/logger';
+import type { Logger } from '@aws-lambda-powertools/logger';
 import type { FastifyPluginAsync } from 'fastify';
 import { loggerService } from '../services';
 import type { LoggerServiceOptions } from '../types';

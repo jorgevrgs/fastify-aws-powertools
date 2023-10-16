@@ -1,4 +1,4 @@
-import { Tracer } from '@aws-lambda-powertools/tracer';
+import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { FastifyPluginAsync } from 'fastify';
 import { tracerService } from '../services';
 import type { TracerServiceOptions } from '../types';

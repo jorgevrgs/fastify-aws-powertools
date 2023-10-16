@@ -1,6 +1,8 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import awsLambdaFastify, { PromiseHandler } from '@fastify/aws-lambda';
-import Fastify, { FastifyInstance } from 'fastify';
+import type { PromiseHandler } from '@fastify/aws-lambda';
+import awsLambdaFastify from '@fastify/aws-lambda';
+import type { FastifyInstance } from 'fastify';
+import Fastify from 'fastify';
 import fp from 'fastify-plugin';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';

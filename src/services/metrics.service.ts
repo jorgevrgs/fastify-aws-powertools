@@ -4,7 +4,7 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import { MetricsServiceOptions } from '../types';
+import type { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],

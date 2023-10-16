@@ -1,7 +1,10 @@
 import type { Logger } from '@aws-lambda-powertools/logger';
-import type { HandlerOptions as LoggerServiceOptions } from '@aws-lambda-powertools/logger/lib/types';
+import type {
+  LogAttributes,
+  HandlerOptions as LoggerServiceOptions,
+} from '@aws-lambda-powertools/logger/lib/types';
 import type { Metrics } from '@aws-lambda-powertools/metrics';
-import { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/types';
+import type { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/types';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { HandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/types';
 import type {
@@ -35,4 +38,9 @@ export interface FastifyAwsPowertoolsOptions {
   tracer?: Tracer;
 }
 
-export { LoggerServiceOptions, MetricsServiceOptions, TracerServiceOptions };
+export type {
+  LogAttributes,
+  LoggerServiceOptions,
+  MetricsServiceOptions,
+  TracerServiceOptions,
+};
