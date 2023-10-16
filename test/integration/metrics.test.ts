@@ -99,6 +99,48 @@ describe('fastifyAwsPowertool metrics integration', function () {
         'Count',
       );
       expect(parsedData[0].ColdStart).toBe(1);
+      expect(parsedData[1].ColdStart).toBeUndefined();
+    });
+
+    it('should not capture cold start metrics if set to false', async () => {
+      // Prepare
+      app = Fastify();
+      app
+        .register(fp(fastifyAwsPowertool), {
+          metricsOptions: {
+            captureColdStartMetric: false,
+          },
+          metrics,
+        })
+        .get('/', async (request, reply) => {
+          const coldStart = request.metrics?.getColdStart();
+          if (coldStart) {
+            return 'cold start';
+          }
+
+          return 'warm start';
+        });
+      proxy = awsLambdaFastify(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      await handler(dummyEvent, dummyContext);
+      await handler(dummyEvent, dummyContext);
+
+      const parsedData = consoleLogSpy.mock.calls.map((value) => {
+        const parsed = JSON.parse(
+          value as unknown as string,
+        ) as unknown as MetricRecords;
+
+        return parsed;
+      });
+
+      expect(parsedData[0]._aws.CloudWatchMetrics[0].Dimensions).not.contains({
+        Name: 'ColdStart',
+        Unit: 'Count',
+      });
+      expect(parsedData[0].ColdStart).toBeUndefined();
     });
   });
 });
