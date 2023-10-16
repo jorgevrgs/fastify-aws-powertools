@@ -21,11 +21,18 @@ export interface AwsLambdaInterface<
 }
 
 declare module 'fastify' {
+  interface FastifyInstance {
+    awsLambda: AwsLambdaInterface;
+    logger: Logger | Logger[];
+    metrics: Metrics | Metrics[];
+    tracer: Tracer;
+  }
+
   interface FastifyRequest {
     awsLambda: AwsLambdaInterface;
-    logger?: Logger;
-    metrics?: Metrics;
-    tracer?: Tracer;
+    logger: Logger;
+    metrics: Metrics;
+    tracer: Tracer;
   }
 }
 
