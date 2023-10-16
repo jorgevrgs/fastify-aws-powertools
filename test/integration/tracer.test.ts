@@ -69,4 +69,28 @@ describe('fastifyAwsPowertool tracer integration', () => {
     expect(setSegmentSpy).toHaveBeenCalledTimes(0);
     expect(getSegmentSpy).toHaveBeenCalledTimes(0);
   });
+
+  it('when used while tracing is disabled, even if the handler throws an error, it does nothing', async () => {
+    // Prepare
+    const setSegmentSpy = vi.spyOn(tracer.provider, 'setSegment');
+    const getSegmentSpy = vi
+      .spyOn(tracer.provider, 'getSegment')
+      .mockImplementationOnce(
+        () => new Segment('facade', process.env._X_AMZN_TRACE_ID || null),
+      )
+      .mockImplementationOnce(() => new Subsegment('## index.handler'));
+
+    const resp = await handler(
+      { httpMethod: 'POST', path: '/not-found' },
+      context,
+    );
+
+    // Act & Assess
+    await expect(
+      handler({ httpMethod: 'POST', path: '/not-found' }, context),
+    ).resolves.toContain({ statusCode: 404 });
+    expect(setSegmentSpy).toHaveBeenCalledTimes(0);
+    expect(getSegmentSpy).toHaveBeenCalledTimes(0);
+    expect.assertions(3);
+  });
 });
