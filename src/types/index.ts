@@ -1,51 +1,29 @@
 import type { Logger } from '@aws-lambda-powertools/logger';
+import type { HandlerOptions as LoggerServiceOptions } from '@aws-lambda-powertools/logger/lib/types';
 import type { Metrics } from '@aws-lambda-powertools/metrics';
+import { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/types';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
+import type { HandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/types';
 import type {
   APIGatewayProxyEvent,
   APIGatewayProxyEventV2,
   Context,
 } from 'aws-lambda';
 
-/** Requires @fastify/aws-lambda
- * @example
- * const const awsLambdaFastify = require('@fastify/aws-lambda')
- * const app = require('./app')
- * const proxy = awsLambdaFastify(app, {
- *  decorateRequest: true,              // default
- *  decorationPropertyName: 'awsLambda' // default
- * })
- * @see https://github.com/fastify/aws-lambda-fastify
- */
+export interface AwsLambdaInterface<
+  TEvent = APIGatewayProxyEvent | APIGatewayProxyEventV2,
+> {
+  event: TEvent;
+  context: Context;
+}
+
 declare module 'fastify' {
   interface FastifyRequest {
-    awsLambda: {
-      event: APIGatewayProxyEvent | APIGatewayProxyEventV2;
-      context: Context;
-    };
+    awsLambda: AwsLambdaInterface;
     logger?: Logger;
     metrics?: Metrics;
     tracer?: Tracer;
   }
-}
-
-export interface LoggerServiceOptions {
-  logEvent?: boolean;
-  clearState?: boolean;
-}
-
-export type LogAttributeValue = unknown;
-export type LogAttributes = { [key: string]: LogAttributeValue };
-export type Dimensions = { [key: string]: string };
-
-export interface MetricsServiceOptions {
-  throwOnEmptyMetrics?: boolean;
-  defaultDimensions?: Dimensions;
-  captureColdStartMetric?: boolean;
-}
-
-export interface TracerServiceOptions {
-  captureResponse?: boolean;
 }
 
 export interface FastifyAwsPowertoolsOptions {
@@ -56,3 +34,5 @@ export interface FastifyAwsPowertoolsOptions {
   metrics?: Metrics | Metrics[];
   tracer?: Tracer;
 }
+
+export { LoggerServiceOptions, MetricsServiceOptions, TracerServiceOptions };
