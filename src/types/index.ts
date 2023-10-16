@@ -46,13 +46,13 @@ export type {
 };
 
 export interface MetricRecords {
-  _aws: Aws;
+  _aws: AwsDetails;
   service: string;
   function_name: string;
   ColdStart: number;
 }
 
-export interface Aws {
+export interface AwsDetails {
   Timestamp: number;
   CloudWatchMetrics: CloudWatchMetric[];
 }
@@ -60,10 +60,10 @@ export interface Aws {
 export interface CloudWatchMetric {
   Namespace: string;
   Dimensions: Array<string[]>;
-  Metrics: Metric[];
+  Metrics: MetricRecord[];
 }
 
-export interface Metric {
+export interface MetricRecord {
   Name: string;
   Unit: string;
 }
