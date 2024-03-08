@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
-import type { SpyInstance } from 'vitest';
+import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
 import type { MetricRecords } from '../../src/types';
@@ -17,7 +17,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
   let metrics: Metrics;
   let proxy: PromiseHandler;
   let handler: PromiseHandler;
-  let consoleLogSpy: SpyInstance;
+  let consoleLogSpy: MockInstance;
   // let consoleErrorSpy: SpyInstance;
   // let consoleWarnSpy: SpyInstance;
 
@@ -69,20 +69,19 @@ describe('fastifyAwsPowertool metrics integration', function () {
 
     it('should capture cold start metric if set to true', async function () {
       vi.stubEnv('_X_AMZN_TRACE_ID', awsRequestId);
+      const consoleSpy = vi
+        .spyOn(metrics['console'], 'log')
+        .mockImplementation(vi.fn());
+
+      vi.spyOn(metrics, 'singleMetric').mockImplementation(() => metrics);
 
       // Cold start
-      // await handler(dummyEvent, { ...dummyContext, awsRequestId });
       await handler(dummyEvent, dummyContext);
 
       // Second call
-      // await handler(dummyEvent, { ...dummyContext, awsRequestId });
       await handler(dummyEvent, dummyContext);
 
-      // console.debug('log', consoleLogSpy.mock.calls);
-      // console.debug('error', consoleErrorSpy.mock.calls);
-      // console.debug('warn', consoleWarnSpy.mock.calls);
-
-      const parsedData = consoleLogSpy.mock.calls.map((value) => {
+      const parsedData = consoleSpy.mock.calls.map((value) => {
         const parsed = JSON.parse(
           value as unknown as string,
         ) as unknown as MetricRecords;
@@ -90,7 +89,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
         return parsed;
       });
 
-      expect(consoleLogSpy.mock.calls).toHaveLength(3);
+      expect(consoleSpy.mock.calls).toHaveLength(2);
       expect(parsedData[0]._aws.CloudWatchMetrics[0].Metrics.length).toBe(1);
       expect(parsedData[0]._aws.CloudWatchMetrics[0].Metrics[0].Name).toBe(
         'ColdStart',
@@ -125,10 +124,14 @@ describe('fastifyAwsPowertool metrics integration', function () {
       handler = async (event, context) => proxy(event, context);
       await app.ready();
 
+      const consoleSpy = vi
+        .spyOn(metrics['console'], 'log')
+        .mockImplementation(vi.fn());
+
       await handler(dummyEvent, dummyContext);
       await handler(dummyEvent, dummyContext);
 
-      const parsedData = consoleLogSpy.mock.calls.map((value) => {
+      const parsedData = consoleSpy.mock.calls.map((value) => {
         const parsed = JSON.parse(
           value as unknown as string,
         ) as unknown as MetricRecords;

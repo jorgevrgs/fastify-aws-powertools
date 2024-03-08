@@ -74,7 +74,7 @@ describe('fastifyAwsPowertool logger integration', function () {
     await handler(dummyEvent, { ...dummyContext, awsRequestId });
 
     expect(logger).toHaveProperty(
-      ['powertoolLogData', 'lambdaContext', 'awsRequestId'],
+      ['powertoolsLogData', 'lambdaContext', 'awsRequestId'],
       awsRequestId,
     );
   });

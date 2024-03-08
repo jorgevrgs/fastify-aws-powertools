@@ -7,20 +7,28 @@ import type {
 } from 'fastify';
 import type { TracerServiceOptions } from '../types';
 
-export function tracerService(target: Tracer, options?: TracerServiceOptions) {
+export function tracerService(
+  target: Tracer,
+  options: TracerServiceOptions = {},
+) {
+  const { captureResponse = true } = options;
+
   let lambdaSegment: Segment;
   let handlerSegment: Subsegment;
 
   const open = (): void => {
     const segment = target.getSegment();
+
     if (segment === undefined) {
       return;
     }
+
     // If segment is defined, then it is a Segment as this middleware is only used for Lambda Handlers
     lambdaSegment = segment as Segment;
     handlerSegment = lambdaSegment.addNewSubsegment(
       `## ${process.env._HANDLER}`,
     );
+
     target.setSegment(handlerSegment as never);
   };
 
@@ -40,7 +48,7 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
     target.setSegment(lambdaSegment as never);
   };
 
-  const onRequestHook: onRequestAsyncHookHandler = async (request, reply) => {
+  const onRequestHook: onRequestAsyncHookHandler = async (_request, _reply) => {
     if (target.isTracingEnabled()) {
       open();
       target.annotateColdStart();
@@ -48,9 +56,12 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
     }
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async (request, reply) => {
+  const onResponseHook: onResponseAsyncHookHandler = async (
+    _request,
+    reply,
+  ) => {
     if (target.isTracingEnabled()) {
-      if (options?.captureResponse ?? true) {
+      if (captureResponse) {
         target.addResponseAsMetadata(reply.raw, process.env._HANDLER);
       }
 
@@ -59,12 +70,14 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
   };
 
   const onErrorHook: onErrorAsyncHookHandler = async (
-    request,
-    reply,
+    _request,
+    _reply,
     error,
   ) => {
     if (target.isTracingEnabled()) {
-      target.addErrorAsMetadata(error as unknown as Error);
+      if (error) {
+        target.addErrorAsMetadata(error as Error);
+      }
 
       close();
     }

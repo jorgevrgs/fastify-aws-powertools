@@ -1,4 +1,4 @@
-import type { Metrics } from '@aws-lambda-powertools/metrics';
+import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { FastifyPluginAsync } from 'fastify';
 import { metricsService } from '../services';
 import type { FastifyAwsPowertoolsMetricsOptions } from '../types';

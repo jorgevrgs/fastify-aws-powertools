@@ -72,15 +72,10 @@ describe('fastifyAwsPowertool tracer integration', () => {
       )
       .mockImplementationOnce(() => new Subsegment('## index.handler'));
 
-    const resp = await handler(
-      { httpMethod: 'POST', path: '/not-found' },
-      dummyContext,
-    );
-
     // Act & Assess
     await expect(
       handler({ httpMethod: 'POST', path: '/not-found' }, dummyContext),
-    ).resolves.toContain({ statusCode: 404 });
+    ).resolves.toMatchObject({ statusCode: 404 });
     expect(setSegmentSpy).toHaveBeenCalledTimes(0);
     expect(getSegmentSpy).toHaveBeenCalledTimes(0);
     expect.assertions(3);

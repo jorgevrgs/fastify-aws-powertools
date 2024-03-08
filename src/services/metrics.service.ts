@@ -12,20 +12,18 @@ export function metricsService(
 ) {
   const metricsInstances = Array.isArray(target) ? target : [target];
 
-  const onRequestHook: onRequestAsyncHookHandler = async (request, reply) => {
+  const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
+    options;
+
+  const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
     metricsInstances.forEach((metrics: Metrics) => {
       metrics.setFunctionName(request.awsLambda.context.functionName);
-      const {
-        throwOnEmptyMetrics,
-        defaultDimensions = { framework: 'fastify' },
-        captureColdStartMetric,
-      } = options;
 
       if (throwOnEmptyMetrics) {
         metrics.throwOnEmptyMetrics();
       }
 
-      if (defaultDimensions) {
+      if (typeof defaultDimensions !== 'undefined') {
         metrics.setDefaultDimensions(defaultDimensions);
       }
 
@@ -41,14 +39,17 @@ export function metricsService(
     });
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async (request, reply) => {
+  const onResponseHook: onResponseAsyncHookHandler = async (
+    _request,
+    _reply,
+  ) => {
     onResponseOrErrorHandler();
   };
 
   const onErrorHook: onErrorAsyncHookHandler = async (
-    request,
-    reply,
-    error,
+    _request,
+    _reply,
+    _error,
   ) => {
     onResponseOrErrorHandler();
   };
