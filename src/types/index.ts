@@ -48,11 +48,21 @@ export interface TracerServiceOptions {
   captureResponse?: boolean;
 }
 
-export interface FastifyAwsPowertoolsOptions {
+export type FastifyAwsPowertoolsLoggerOptions = {
   loggerOptions?: LoggerServiceOptions;
-  metricsOptions?: MetricsServiceOptions;
-  tracerOptions?: TracerServiceOptions;
   logger?: Logger | Logger[];
+};
+
+export type FastifyAwsPowertoolsMetricsOptions = {
+  metricsOptions?: MetricsServiceOptions;
   metrics?: Metrics | Metrics[];
+};
+
+export type FastifyAwsPowertoolsTracerOptions = {
+  tracerOptions?: TracerServiceOptions;
   tracer?: Tracer;
-}
+};
+
+export type FastifyAwsPowertoolsOptions = FastifyAwsPowertoolsLoggerOptions &
+  FastifyAwsPowertoolsMetricsOptions &
+  FastifyAwsPowertoolsTracerOptions;
