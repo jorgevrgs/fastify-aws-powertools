@@ -7,24 +7,48 @@ import type {
 } from 'fastify';
 import type { TracerServiceOptions } from '../types';
 
-export function tracerService(target: Tracer, options?: TracerServiceOptions) {
-  let lambdaSegment: Subsegment | Segment;
+export function tracerService(
+  target: Tracer,
+  options: TracerServiceOptions = {},
+) {
+  const { captureResponse = true } = options;
+
+  let lambdaSegment: Segment;
+  let handlerSegment: Subsegment;
 
   const open = (): void => {
-    lambdaSegment = target.getSegment();
-    const handlerSegment = lambdaSegment.addNewSubsegment(
+    const segment = target.getSegment();
+
+    if (segment === undefined) {
+      return;
+    }
+
+    // If segment is defined, then it is a Segment as this middleware is only used for Lambda Handlers
+    lambdaSegment = segment as Segment;
+    handlerSegment = lambdaSegment.addNewSubsegment(
       `## ${process.env._HANDLER}`,
     );
-    target.setSegment(handlerSegment);
+
+    target.setSegment(handlerSegment as never);
   };
 
   const close = (): void => {
-    const subsegment = target.getSegment();
-    subsegment.close();
-    target.setSegment(lambdaSegment as Segment);
+    if (handlerSegment === undefined || lambdaSegment === null) {
+      return;
+    }
+
+    try {
+      handlerSegment.close();
+    } catch (error) {
+      console.warn(
+        `Failed to close or serialize segment, ${handlerSegment.name}. We are catching the error but data might be lost.`,
+        error,
+      );
+    }
+    target.setSegment(lambdaSegment as never);
   };
 
-  const onRequestHook: onRequestAsyncHookHandler = async () => {
+  const onRequestHook: onRequestAsyncHookHandler = async (_request, _reply) => {
     if (target.isTracingEnabled()) {
       open();
       target.annotateColdStart();
@@ -32,9 +56,12 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
     }
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async (request, reply) => {
+  const onResponseHook: onResponseAsyncHookHandler = async (
+    _request,
+    reply,
+  ) => {
     if (target.isTracingEnabled()) {
-      if (options?.captureResponse ?? true) {
+      if (captureResponse) {
         target.addResponseAsMetadata(reply.raw, process.env._HANDLER);
       }
 
@@ -42,9 +69,16 @@ export function tracerService(target: Tracer, options?: TracerServiceOptions) {
     }
   };
 
-  const onErrorHook: onErrorAsyncHookHandler = async (error) => {
+  const onErrorHook: onErrorAsyncHookHandler = async (
+    _request,
+    _reply,
+    error,
+  ) => {
     if (target.isTracingEnabled()) {
-      target.addErrorAsMetadata(error as unknown as Error);
+      if (error) {
+        target.addErrorAsMetadata(error as Error);
+      }
+
       close();
     }
   };

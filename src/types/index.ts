@@ -1,58 +1,84 @@
 import type { Logger } from '@aws-lambda-powertools/logger';
+import type { LogAttributes } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
+import type { InjectLambdaContextOptions as LoggerServiceOptions } from '@aws-lambda-powertools/logger/lib/cjs/types/Logger';
 import type { Metrics } from '@aws-lambda-powertools/metrics';
+import type { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/cjs/types/Metrics';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
+import type { CaptureLambdaHandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
 import type {
   APIGatewayProxyEvent,
   APIGatewayProxyEventV2,
   Context,
 } from 'aws-lambda';
 
-/** Requires @fastify/aws-lambda
- * @example
- * const const awsLambdaFastify = require('@fastify/aws-lambda')
- * const app = require('./app')
- * const proxy = awsLambdaFastify(app, {
- *  decorateRequest: true,              // default
- *  decorationPropertyName: 'awsLambda' // default
- * })
- * @see https://github.com/fastify/aws-lambda-fastify
- */
+export type {
+  LogAttributes,
+  LoggerServiceOptions,
+  MetricsServiceOptions,
+  TracerServiceOptions,
+};
+
+export interface MetricRecord {
+  Name: string;
+  Unit: string;
+}
+
+export interface CloudWatchMetric {
+  Namespace: string;
+  Dimensions: Array<string[]>;
+  Metrics: MetricRecord[];
+}
+
+export interface AwsDetails {
+  Timestamp: number;
+  CloudWatchMetrics: CloudWatchMetric[];
+}
+
+export interface MetricRecords {
+  _aws: AwsDetails;
+  service: string;
+  function_name: string;
+  ColdStart: number;
+}
+
+export interface AwsLambdaInterface<
+  TEvent = APIGatewayProxyEvent | APIGatewayProxyEventV2,
+> {
+  event: TEvent;
+  context: Context;
+}
+
 declare module 'fastify' {
+  interface FastifyInstance {
+    awsLambda: AwsLambdaInterface;
+    logger: Logger | Logger[];
+    metrics: Metrics | Metrics[];
+    tracer: Tracer;
+  }
+
   interface FastifyRequest {
-    awsLambda: {
-      event: APIGatewayProxyEvent | APIGatewayProxyEventV2;
-      context: Context;
-    };
-    logger?: Logger;
-    metrics?: Metrics;
-    tracer?: Tracer;
+    awsLambda: AwsLambdaInterface;
+    logger: Logger;
+    metrics: Metrics;
+    tracer: Tracer;
   }
 }
 
-export interface LoggerServiceOptions {
-  logEvent?: boolean;
-  clearState?: boolean;
-}
-
-export type LogAttributeValue = unknown;
-export type LogAttributes = { [key: string]: LogAttributeValue };
-export type Dimensions = { [key: string]: string };
-
-export interface MetricsServiceOptions {
-  throwOnEmptyMetrics?: boolean;
-  defaultDimensions?: Dimensions;
-  captureColdStartMetric?: boolean;
-}
-
-export interface TracerServiceOptions {
-  captureResponse?: boolean;
-}
-
-export interface FastifyAwsPowertoolsOptions {
+export type FastifyAwsPowertoolsLoggerOptions = {
   loggerOptions?: LoggerServiceOptions;
-  metricsOptions?: MetricsServiceOptions;
-  tracerOptions?: TracerServiceOptions;
   logger?: Logger | Logger[];
+};
+
+export type FastifyAwsPowertoolsMetricsOptions = {
+  metricsOptions?: MetricsServiceOptions;
   metrics?: Metrics | Metrics[];
+};
+
+export type FastifyAwsPowertoolsTracerOptions = {
+  tracerOptions?: TracerServiceOptions;
   tracer?: Tracer;
-}
+};
+
+export type FastifyAwsPowertoolsOptions = FastifyAwsPowertoolsLoggerOptions &
+  FastifyAwsPowertoolsMetricsOptions &
+  FastifyAwsPowertoolsTracerOptions;

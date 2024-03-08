@@ -4,44 +4,54 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import { MetricsServiceOptions } from '../types';
+import type { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],
   options: MetricsServiceOptions = {},
 ) {
-  const metricsInstances = target instanceof Array ? target : [target];
+  const metricsInstances = Array.isArray(target) ? target : [target];
 
-  const onRequestHook: onRequestAsyncHookHandler = async (request) => {
+  const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
+    options;
+
+  const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
     metricsInstances.forEach((metrics: Metrics) => {
       metrics.setFunctionName(request.awsLambda.context.functionName);
-      const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
-        options;
 
-      if (throwOnEmptyMetrics !== undefined) {
+      if (throwOnEmptyMetrics) {
         metrics.throwOnEmptyMetrics();
       }
 
-      if (defaultDimensions !== undefined) {
+      if (typeof defaultDimensions !== 'undefined') {
         metrics.setDefaultDimensions(defaultDimensions);
       }
 
-      if (captureColdStartMetric !== undefined) {
+      if (captureColdStartMetric) {
         metrics.captureColdStartMetric();
       }
     });
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async () => {
-    metricsInstances.forEach((metrics: Metrics) => {
+  const onResponseOrErrorHandler = () => {
+    metricsInstances.forEach((metrics) => {
       metrics.publishStoredMetrics();
     });
   };
 
-  const onErrorHook: onErrorAsyncHookHandler = async () => {
-    metricsInstances.forEach((metrics: Metrics) => {
-      metrics.publishStoredMetrics();
-    });
+  const onResponseHook: onResponseAsyncHookHandler = async (
+    _request,
+    _reply,
+  ) => {
+    onResponseOrErrorHandler();
+  };
+
+  const onErrorHook: onErrorAsyncHookHandler = async (
+    _request,
+    _reply,
+    _error,
+  ) => {
+    onResponseOrErrorHandler();
   };
 
   return {

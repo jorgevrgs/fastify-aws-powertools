@@ -8,48 +8,55 @@ import type { LogAttributes, LoggerServiceOptions } from '../types';
 
 export function loggerService(
   target: Logger | Logger[],
-  options?: LoggerServiceOptions,
+  options: LoggerServiceOptions = {},
 ) {
-  const loggers = target instanceof Array ? target : [target];
+  const { clearState, logEvent } = options;
+
+  const loggers = Array.isArray(target) ? target : [target];
   const persistentAttributes: LogAttributes[] = [];
 
-  const onRequestHook: onRequestAsyncHookHandler = async (request) => {
-    loggers.forEach((logger: Logger) => {
-      if (options?.clearState === true) {
-        persistentAttributes.push({ ...logger.getPersistentLogAttributes() });
+  const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
+    loggers.forEach((logger, index) => {
+      if (clearState === true) {
+        persistentAttributes[index] = {
+          ...logger.getPersistentLogAttributes(),
+        };
       }
 
       Logger.injectLambdaContextBefore(
         logger,
         request.awsLambda.event,
         request.awsLambda.context,
-        options,
+        { clearState, logEvent },
       );
     });
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async () => {
-    if (options && options.clearState === true) {
-      loggers.forEach((logger: Logger, index: number) => {
+  const onResponseOrErrorHandler = () => {
+    if (clearState === true) {
+      loggers.forEach((logger, index) => {
         Logger.injectLambdaContextAfterOrOnError(
           logger,
           persistentAttributes[index],
-          options,
+          { clearState, logEvent },
         );
       });
     }
   };
 
-  const onErrorHook: onErrorAsyncHookHandler = async () => {
-    if (options && options.clearState === true) {
-      loggers.forEach((logger: Logger, index: number) => {
-        Logger.injectLambdaContextAfterOrOnError(
-          logger,
-          persistentAttributes[index],
-          options,
-        );
-      });
-    }
+  const onResponseHook: onResponseAsyncHookHandler = async (
+    _request,
+    _reply,
+  ) => {
+    onResponseOrErrorHandler();
+  };
+
+  const onErrorHook: onErrorAsyncHookHandler = async (
+    _request,
+    _reply,
+    _error,
+  ) => {
+    onResponseOrErrorHandler();
   };
 
   return {
