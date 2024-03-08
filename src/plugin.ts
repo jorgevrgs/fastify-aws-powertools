@@ -1,50 +1,36 @@
-import { Logger } from '@aws-lambda-powertools/logger';
-import { Metrics } from '@aws-lambda-powertools/metrics';
-import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { loggerHook, metricsHook, tracerHook } from './hooks';
 import type { FastifyAwsPowertoolsOptions } from './types';
 
-export const fastifyAwsPowertools: FastifyPluginAsync<
-  FastifyAwsPowertoolsOptions
-> = async (fastify, options) => {
+const plugin: FastifyPluginAsync<FastifyAwsPowertoolsOptions> = async (
+  fastify,
+  opts,
+) => {
   const {
     logger,
     metrics,
     tracer,
-    loggerOptions = {},
-    metricsOptions = {},
-    tracerOptions = {},
-  } = options;
+    loggerOptions,
+    metricsOptions,
+    tracerOptions,
+  } = opts;
 
-  // logger
-  const defaultLogger = logger ?? new Logger();
   fastify
     .decorateRequest('logger', null)
-    .decorate('logger', logger)
-    .register(fp(loggerHook), {
-      logger: defaultLogger,
-      handlerOptions: loggerOptions,
-    });
-
-  // metrics
-  const defaultMetrics = metrics ?? new Metrics();
-  fastify
     .decorateRequest('metrics', null)
-    .decorate('metrics', metrics)
-    .register(fp(metricsHook), {
-      metrics: defaultMetrics,
-      handlerOptions: metricsOptions,
-    });
-
-  // tracer
-  const defaultTracer = tracer ?? new Tracer();
-  fastify
     .decorateRequest('tracer', null)
+    .decorate('logger', logger)
+    .decorate('metrics', metrics)
     .decorate('tracer', tracer)
-    .register(fp(tracerHook), {
-      tracer: defaultTracer,
-      handlerOptions: tracerOptions,
-    });
+    .register(fp(loggerHook), { logger, loggerOptions })
+    .register(fp(metricsHook), { metrics, metricsOptions })
+    .register(fp(tracerHook), { tracer, tracerOptions });
 };
+
+export const fastifyAwsPowertools = plugin;
+
+export const fastifyAwsPowertoolsPlugin = fp(plugin, {
+  name: 'fastify-aws-powertools',
+  fastify: '4.x',
+});

@@ -1,2 +1,5 @@
-export * from './plugin';
-export { fastifyAwsPowertools as default } from './plugin';
+export {
+  fastifyAwsPowertools as default,
+  fastifyAwsPowertools,
+  fastifyAwsPowertoolsPlugin,
+} from './plugin';
