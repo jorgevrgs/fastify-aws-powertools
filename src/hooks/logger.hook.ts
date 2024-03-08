@@ -1,20 +1,18 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { FastifyPluginAsync } from 'fastify';
 import { loggerService } from '../services';
-import type { FastifyAwsPowertoolsLoggerOptions } from '../types';
+import type { FastifyAwsPowertoolsOptions } from '../types';
 
 export const loggerHook: FastifyPluginAsync<
-  FastifyAwsPowertoolsLoggerOptions
+  FastifyAwsPowertoolsOptions
 > = async (fastify, opts) => {
-  const { logger: baseLogger, loggerOptions: options } = opts;
-
-  let logger = baseLogger as Logger;
+  let logger = opts.logger as Logger;
 
   if (typeof logger === 'undefined') {
     logger = new Logger();
   }
 
-  const { onRequest, onResponse, onError } = loggerService(logger, options);
+  const loggerHooks = loggerService(logger, opts.loggerOptions);
 
   fastify
     .addHook('onRequest', async (request) => {
@@ -22,7 +20,7 @@ export const loggerHook: FastifyPluginAsync<
         request.logger = logger;
       }
     })
-    .addHook('onRequest', onRequest)
-    .addHook('onResponse', onResponse)
-    .addHook('onError', onError);
+    .addHook('onRequest', loggerHooks.onRequest)
+    .addHook('onResponse', loggerHooks.onResponse)
+    .addHook('onError', loggerHooks.onError);
 };
