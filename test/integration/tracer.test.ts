@@ -25,7 +25,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
         tracerOptions: { captureResponse: false },
         tracer,
       })
-      .get('/', async (request, reply) => {
+      .get('/', async (_request, _reply) => {
         return 'OK';
       });
     proxy = awsLambdaFastify(app);

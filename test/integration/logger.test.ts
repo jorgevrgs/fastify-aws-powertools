@@ -34,7 +34,7 @@ describe('fastifyAwsPowertool logger integration', function () {
       .register(
         fp(
           async (instance) => {
-            instance.get('/', async (request, reply) => {
+            instance.get('/', async (request, _reply) => {
               request.logger?.info('This is an INFO log with some context');
 
               return 'OK';

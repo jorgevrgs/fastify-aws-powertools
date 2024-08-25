@@ -22,9 +22,9 @@ describe('fastifyAwsPowertool metrics integration', function () {
   // let consoleWarnSpy: SpyInstance;
 
   beforeEach(async function () {
-    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
+    vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     metrics = new Metrics({
       namespace: 'serverlessAirline',
       serviceName: 'orders',
@@ -38,7 +38,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
         },
         metrics,
       })
-      .get('/', async (request, reply) => {
+      .get('/', async (request, _reply) => {
         const coldStart = request.metrics?.getColdStart();
         if (coldStart) {
           return 'cold start';
@@ -111,7 +111,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
           },
           metrics,
         })
-        .get('/', async (request, reply) => {
+        .get('/', async (request, _reply) => {
           const coldStart = request.metrics?.getColdStart();
           if (coldStart) {
             return 'cold start';
@@ -144,6 +144,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
         Unit: 'Count',
       });
       expect(parsedData[0].ColdStart).toBeUndefined();
+      expect(consoleLogSpy).to.not.toHaveBeenCalled()
     });
   });
 });

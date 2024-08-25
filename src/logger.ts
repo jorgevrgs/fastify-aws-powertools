@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Logger as PowertoolsLogger } from '@aws-lambda-powertools/logger';
 import type { LogLevel } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
 import type { FastifyBaseLogger } from 'fastify';
@@ -43,31 +42,31 @@ export class Logger implements FastifyBaseLogger {
     return new Logger(logger);
   }
 
-  fatal<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  fatal<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.error(msg ?? '', { obj, ...args });
   }
 
-  error<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  error<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.error(msg ?? '', { obj, ...args });
   }
 
-  warn<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  warn<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.warn(msg ?? '', { obj, ...args });
   }
 
-  info<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  info<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.info(msg ?? '', { obj, ...args });
   }
 
-  debug<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  debug<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.debug(msg ?? '', { obj, ...args });
   }
 
-  trace<T extends object>(obj: T, msg?: string, ...args: Array<any>) {
+  trace<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
     this.logger.error(msg ?? '', { obj, ...args });
   }
 
-  silent<T extends object>(_obj: T, _msg?: string, ..._args: Array<any>) {
+  silent<T extends object>(_obj: T, _msg?: string, ..._args: Array<unknown>) {
     // Noop function
   }
 }
