@@ -4,5 +4,7 @@ import server from './server';
 
 const proxy = awsLambdaFastify(server);
 
-export const handler = async (event: APIGatewayProxyEventV2, context: Context) =>
-  proxy(event, context);
+export const handler = async (
+  event: APIGatewayProxyEventV2,
+  context: Context,
+) => proxy(event, context);

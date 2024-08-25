@@ -16,7 +16,7 @@
     "prepublish": "pnpm run build",
     "build": "tsc --project tsconfig.mjs.json & tsc --project tsconfig.cjs.json",
     "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
+    "lint:fix": "pnpm biome check --write .",
     "test": "vitest --allowOnly",
     "coverage": "vitest run --coverage"
   },

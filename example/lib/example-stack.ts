@@ -1,13 +1,13 @@
 import {
+  CfnOutput,
+  RemovalPolicy,
+  Stack,
+  StackProps,
   aws_apigateway,
   aws_dynamodb,
   aws_lambda,
   aws_lambda_nodejs,
   aws_logs,
-  CfnOutput,
-  RemovalPolicy,
-  Stack,
-  StackProps,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
