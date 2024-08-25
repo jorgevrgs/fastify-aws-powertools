@@ -1,5 +1,3 @@
-import { helloworldContext as dummyContext } from '@aws-lambda-powertools/commons/lib/samples/resources/contexts/hello-world';
-import { CustomEvent as dummyEvent } from '@aws-lambda-powertools/commons/lib/samples/resources/events/custom/index';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
@@ -11,6 +9,8 @@ import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
 import type { MetricRecords } from '../../src/types';
+import { dummyContext } from '../fixtures/context';
+import { dummyEvent } from '../fixtures/event';
 
 describe('fastifyAwsPowertool metrics integration', function () {
   let app: FastifyInstance;
@@ -144,7 +144,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
         Unit: 'Count',
       });
       expect(parsedData[0].ColdStart).toBeUndefined();
-      expect(consoleLogSpy).to.not.toHaveBeenCalled()
+      expect(consoleLogSpy).to.not.toHaveBeenCalled();
     });
   });
 });

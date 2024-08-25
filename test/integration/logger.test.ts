@@ -1,5 +1,3 @@
-import { helloworldContext as dummyContext } from '@aws-lambda-powertools/commons/lib/samples/resources/contexts/hello-world';
-import { CustomEvent as dummyEvent } from '@aws-lambda-powertools/commons/lib/samples/resources/events/custom/index';
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
@@ -8,6 +6,8 @@ import Fastify from 'fastify';
 import fp from 'fastify-plugin';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
+import { dummyContext } from '../fixtures/context';
+import { dummyEvent } from '../fixtures/event';
 
 vi.spyOn(console, 'log').mockImplementation(vi.fn);
 
