@@ -1,7 +1,8 @@
-import { randomUUID } from 'crypto';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
@@ -46,7 +47,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
 
         return 'warm start';
       });
-    proxy = awsLambdaFastify(app);
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
     await app.ready();
@@ -119,7 +120,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
 
           return 'warm start';
         });
-      proxy = awsLambdaFastify(app);
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
       handler = async (event, context) => proxy(event, context);
       await app.ready();

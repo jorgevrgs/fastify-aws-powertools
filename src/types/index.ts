@@ -5,11 +5,6 @@ import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/cjs/types/Metrics';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { CaptureLambdaHandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
-import type {
-  APIGatewayProxyEvent,
-  APIGatewayProxyEventV2,
-  Context,
-} from 'aws-lambda';
 
 export type {
   LogAttributes,
@@ -41,23 +36,14 @@ export interface MetricRecords {
   ColdStart: number;
 }
 
-export interface AwsLambdaInterface<
-  TEvent = APIGatewayProxyEvent | APIGatewayProxyEventV2,
-> {
-  event: TEvent;
-  context: Context;
-}
-
 declare module 'fastify' {
   interface FastifyInstance {
-    awsLambda: AwsLambdaInterface;
     logger: Logger | Logger[];
     metrics: Metrics | Metrics[];
     tracer: Tracer;
   }
 
   interface FastifyRequest {
-    awsLambda: AwsLambdaInterface;
     logger: Logger;
     metrics: Metrics;
     tracer: Tracer;

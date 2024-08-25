@@ -1,6 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
@@ -49,7 +50,7 @@ describe('fastifyAwsPowertool logger integration', function () {
           },
         ),
       );
-    proxy = awsLambdaFastify(app);
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
     await app.ready();

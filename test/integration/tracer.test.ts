@@ -1,8 +1,9 @@
-import { randomUUID } from 'crypto';
 import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Segment, Subsegment } from 'aws-xray-sdk-core';
+import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
@@ -28,7 +29,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
       .get('/', async (_request, _reply) => {
         return 'OK';
       });
-    proxy = awsLambdaFastify(app);
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
     await app.ready();
