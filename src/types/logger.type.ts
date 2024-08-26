@@ -3,5 +3,5 @@ import type { InjectLambdaContextOptions as LoggerServiceOptions } from '@aws-la
 
 export type FastifyAwsPowertoolsLoggerOptions = {
   loggerOptions?: LoggerServiceOptions;
-  logger?: Logger | Logger[];
+  logger?: Logger;
 };
