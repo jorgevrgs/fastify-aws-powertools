@@ -2,10 +2,10 @@ import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
+import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
@@ -13,7 +13,7 @@ import type { MetricRecords } from '../../src/types';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
-describe('fastifyAwsPowertool metrics integration', function () {
+describe('fastifyAwsPowertool metrics integration', () => {
   let app: FastifyInstance;
   let metrics: Metrics;
   let proxy: PromiseHandler;
@@ -22,7 +22,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
   // let consoleErrorSpy: SpyInstance;
   // let consoleWarnSpy: SpyInstance;
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     vi.spyOn(console, 'warn').mockImplementation(vi.fn());
@@ -53,7 +53,7 @@ describe('fastifyAwsPowertool metrics integration', function () {
     await app.ready();
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
@@ -61,14 +61,14 @@ describe('fastifyAwsPowertool metrics integration', function () {
     await app.close();
   });
 
-  it('should be a function', function () {
+  it('should be a function', () => {
     expect(fastifyAwsPowertool).toBeInstanceOf(Function);
   });
 
-  describe('captureColdStartMetric', function () {
+  describe('captureColdStartMetric', () => {
     const awsRequestId = randomUUID();
 
-    it('should capture cold start metric if set to true', async function () {
+    it('should capture cold start metric if set to true', async () => {
       vi.stubEnv('_X_AMZN_TRACE_ID', awsRequestId);
       const consoleSpy = vi
         .spyOn(metrics['console'], 'log')

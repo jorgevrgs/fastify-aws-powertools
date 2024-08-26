@@ -4,6 +4,7 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
+import { isAwsLambdaRequest } from '../helpers';
 import type { MetricsServiceOptions } from '../types';
 
 export function metricsService(
@@ -16,7 +17,12 @@ export function metricsService(
     options;
 
   const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
-    metricsInstances.forEach((metrics: Metrics) => {
+    if (!isAwsLambdaRequest(request)) {
+      request.log.warn('Request does not contain AWS Lambda object');
+      return;
+    }
+
+    for (const metrics of metricsInstances) {
       metrics.setFunctionName(request.awsLambda.context.functionName);
 
       if (throwOnEmptyMetrics) {
@@ -30,13 +36,13 @@ export function metricsService(
       if (captureColdStartMetric) {
         metrics.captureColdStartMetric();
       }
-    });
+    }
   };
 
   const onResponseOrErrorHandler = () => {
-    metricsInstances.forEach((metrics) => {
+    for (const metrics of metricsInstances) {
       metrics.publishStoredMetrics();
-    });
+    }
   };
 
   const onResponseHook: onResponseAsyncHookHandler = async (

@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
-export const dummyEvent: APIGatewayProxyEventV2 = {
+export const dummyEvent = {
   version: '2',
   routeKey: '/',
   rawPath: '',
@@ -25,4 +25,4 @@ export const dummyEvent: APIGatewayProxyEventV2 = {
     timeEpoch: 0,
   },
   isBase64Encoded: false,
-};
+} as const as APIGatewayProxyEventV2;

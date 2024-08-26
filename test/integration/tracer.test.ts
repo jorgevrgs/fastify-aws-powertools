@@ -3,10 +3,10 @@ import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Segment, Subsegment } from 'aws-xray-sdk-core';
-import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
+import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
 import { dummyContext } from '../fixtures/context';
@@ -35,7 +35,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
     await app.ready();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     vi.unstubAllEnvs();
   });
 
