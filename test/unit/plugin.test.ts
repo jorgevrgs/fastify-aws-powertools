@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
-import fp from 'fastify-plugin';
 import { beforeEach, describe, expect, it } from 'vitest';
 import fastifyAwsPowertool from '../../src';
 
@@ -16,7 +15,7 @@ describe('fastifyAwsPowertool unit', () => {
   });
 
   it('should register the plugin', async () => {
-    app.register(fp(fastifyAwsPowertool));
+    app.register(fastifyAwsPowertool);
 
     await app.ready();
 
