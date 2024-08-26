@@ -45,12 +45,14 @@ export function tracerService(
         error,
       );
     }
-    target.setSegment(lambdaSegment as never);
+
+    target.setSegment(lambdaSegment);
   };
 
   const onRequestHook: onRequestAsyncHookHandler = async (_request, _reply) => {
     if (target.isTracingEnabled()) {
       open();
+
       target.annotateColdStart();
       target.addServiceNameAnnotation();
     }

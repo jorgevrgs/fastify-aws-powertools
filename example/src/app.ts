@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { Metrics, MetricUnits } from '@aws-lambda-powertools/metrics';
+import { MetricUnit, Metrics } from '@aws-lambda-powertools/metrics';
 import { Tracer } from '@aws-lambda-powertools/tracer';
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import fastifyAwsPowertools from 'fastify-aws-powertools';
 
 const app: FastifyPluginAsync = async (fastify) => {
@@ -16,7 +16,7 @@ const app: FastifyPluginAsync = async (fastify) => {
     request.logger?.info('This is a log with an extra variable', {
       foo: 'bar',
     });
-    request.metrics?.addMetric('successfulBooking', MetricUnits.Count, 1);
+    request.metrics?.addMetric('successfulBooking', MetricUnit.Count, 1);
     request.metrics?.addMetadata(
       'bookingId',
       '7051cd10-6283-11ec-90d6-0242ac120003',

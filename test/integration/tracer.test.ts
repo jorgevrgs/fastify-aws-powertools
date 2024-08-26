@@ -1,15 +1,16 @@
-import { helloworldContext as dummyContext } from '@aws-lambda-powertools/commons/lib/samples/resources/contexts/hello-world';
-import { CustomEvent as dummyEvent } from '@aws-lambda-powertools/commons/lib/samples/resources/events/custom/index';
+import { randomUUID } from 'node:crypto';
 import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Segment, Subsegment } from 'aws-xray-sdk-core';
-import { randomUUID } from 'crypto';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
+import { dummyContext } from '../fixtures/context';
+import { dummyEvent } from '../fixtures/event';
 
 describe('fastifyAwsPowertool tracer integration', () => {
   let app: FastifyInstance;
@@ -25,16 +26,16 @@ describe('fastifyAwsPowertool tracer integration', () => {
         tracerOptions: { captureResponse: false },
         tracer,
       })
-      .get('/', async (request, reply) => {
+      .get('/', async (_request, _reply) => {
         return 'OK';
       });
-    proxy = awsLambdaFastify(app);
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
     await app.ready();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     vi.unstubAllEnvs();
   });
 

@@ -4,43 +4,40 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import type { LogAttributes, LoggerServiceOptions } from '../types';
+import { isAwsLambdaRequest } from '../helpers';
+import type { LoggerServiceOptions } from '../types';
 
 export function loggerService(
   target: Logger | Logger[],
   options: LoggerServiceOptions = {},
 ) {
-  const { clearState, logEvent } = options;
+  const { resetKeys, clearState } = options;
+
+  const isResetStateEnabled = clearState || resetKeys;
 
   const loggers = Array.isArray(target) ? target : [target];
-  const persistentAttributes: LogAttributes[] = [];
 
   const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
-    loggers.forEach((logger, index) => {
-      if (clearState === true) {
-        persistentAttributes[index] = {
-          ...logger.getPersistentLogAttributes(),
-        };
-      }
+    if (!isAwsLambdaRequest(request)) {
+      request.log.warn('Request does not contain AWS Lambda object');
+      return;
+    }
 
+    for (const logger of loggers) {
       Logger.injectLambdaContextBefore(
         logger,
         request.awsLambda.event,
         request.awsLambda.context,
-        { clearState, logEvent },
+        options,
       );
-    });
+    }
   };
 
   const onResponseOrErrorHandler = () => {
-    if (clearState === true) {
-      loggers.forEach((logger, index) => {
-        Logger.injectLambdaContextAfterOrOnError(
-          logger,
-          persistentAttributes[index],
-          { clearState, logEvent },
-        );
-      });
+    if (isResetStateEnabled) {
+      for (const logger of loggers) {
+        logger.resetKeys();
+      }
     }
   };
 
