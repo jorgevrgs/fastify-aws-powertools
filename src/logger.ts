@@ -37,7 +37,7 @@ export class Logger implements FastifyBaseLogger {
     const logger = this.logger.createChild({
       logLevel: fastifyToPowertoolsLevel[logLevel ?? 'info'],
     });
-    logger.addPersistentLogAttributes(bindings);
+    logger.appendPersistentKeys(bindings);
 
     return new Logger(logger);
   }
