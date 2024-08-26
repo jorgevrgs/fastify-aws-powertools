@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
@@ -5,7 +6,6 @@ import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
-import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
@@ -71,6 +71,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
     it('should capture cold start metric if set to true', async () => {
       vi.stubEnv('_X_AMZN_TRACE_ID', awsRequestId);
       const consoleSpy = vi
+        // biome-ignore lint/complexity/useLiteralKeys: This needs to be accessed with literal key for testing
         .spyOn(metrics['console'], 'log')
         .mockImplementation(vi.fn());
 
@@ -126,6 +127,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
       await app.ready();
 
       const consoleSpy = vi
+        // biome-ignore lint/complexity/useLiteralKeys: This needs to be accessed with literal key for testing
         .spyOn(metrics['console'], 'log')
         .mockImplementation(vi.fn());
 

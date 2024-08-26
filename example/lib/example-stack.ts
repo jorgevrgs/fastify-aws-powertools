@@ -1,15 +1,15 @@
+import type { StackProps } from 'aws-cdk-lib';
 import {
   CfnOutput,
   RemovalPolicy,
   Stack,
-  StackProps,
   aws_apigateway,
   aws_dynamodb,
   aws_lambda,
   aws_lambda_nodejs,
   aws_logs,
 } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import type { Construct } from 'constructs';
 
 export class ExampleStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
