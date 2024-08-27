@@ -1,15 +1,8 @@
-import type { LogAttributes } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
-import type { InjectLambdaContextOptions as LoggerServiceOptions } from '@aws-lambda-powertools/logger/lib/cjs/types/Logger';
 import type { Metrics } from '@aws-lambda-powertools/metrics';
-import type { ExtraOptions as MetricsServiceOptions } from '@aws-lambda-powertools/metrics/lib/cjs/types/Metrics';
-import type { CaptureLambdaHandlerOptions as TracerServiceOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
-
-export type {
-  LogAttributes,
-  LoggerServiceOptions,
-  MetricsServiceOptions,
-  TracerServiceOptions,
-};
+import type {
+  ExtraOptions,
+  MetricsOptions,
+} from '@aws-lambda-powertools/metrics/lib/cjs/types/Metrics';
 
 export interface MetricRecord {
   Name: string;
@@ -35,6 +28,7 @@ export interface MetricRecords {
 }
 
 export type FastifyAwsPowertoolsMetricsOptions = {
-  metricsOptions?: MetricsServiceOptions;
+  metricsOptions?: ExtraOptions;
+  metricsInstanceOptions?: MetricsOptions;
   metrics?: Metrics;
 };

@@ -1,15 +1,15 @@
 import { Logger } from '@aws-lambda-powertools/logger';
+import type { InjectLambdaContextOptions } from '@aws-lambda-powertools/logger/lib/cjs/types/Logger';
 import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
 import { isAwsLambdaRequest } from '../helpers';
-import type { LoggerServiceOptions } from '../types';
 
 export function loggerService(
   target: Logger | Logger[],
-  options: LoggerServiceOptions = {},
+  options: InjectLambdaContextOptions = {},
 ) {
   const { resetKeys, clearState } = options;
 

@@ -1,18 +1,13 @@
-import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { FastifyPluginAsync } from 'fastify';
 import { metricsService } from '../services';
 import type { FastifyAwsPowertoolsMetricsOptions } from '../types';
 
 export const metricsHook: FastifyPluginAsync<
-  FastifyAwsPowertoolsMetricsOptions
+  Required<
+    Pick<FastifyAwsPowertoolsMetricsOptions, 'metrics' | 'metricsOptions'>
+  >
 > = async (fastify, opts) => {
-  const { metrics: baseMetrics, metricsOptions: options } = opts;
-
-  let metrics = baseMetrics as Metrics;
-
-  if (typeof metrics === 'undefined') {
-    metrics = new Metrics();
-  }
+  const { metrics, metricsOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = metricsService(metrics, options);
 

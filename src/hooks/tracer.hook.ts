@@ -1,18 +1,11 @@
-import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { FastifyPluginAsync } from 'fastify';
 import { tracerService } from '../services';
 import type { FastifyAwsPowertoolsTracerOptions } from '../types';
 
 export const tracerHook: FastifyPluginAsync<
-  FastifyAwsPowertoolsTracerOptions
+  Required<Pick<FastifyAwsPowertoolsTracerOptions, 'tracer' | 'tracerOptions'>>
 > = async (fastify, opts) => {
-  const { tracer: baseTracer, tracerOptions: options } = opts;
-
-  let tracer = baseTracer as Tracer;
-
-  if (typeof tracer === 'undefined') {
-    tracer = new Tracer();
-  }
+  const { tracer, tracerOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = tracerService(tracer, options);
 

@@ -23,14 +23,13 @@ npm i fastify @fastify/aws-lambda
 Configure the plugin:
 
 ```typescript
-import fastifyAwsPowertool, {
-  FastifyAwsPowertoolsOptions,
-} from 'fastify-aws-powertools';
-import { FastifyASyncPlugin } from 'fastify';
+import fastifyAwsPowertool from 'fastify-aws-powertools';
+import type { FastifyAwsPowertoolsOptions } from 'fastify-aws-powertools';
+import type { FastifyASyncPlugin } from 'fastify';
 
-export const plugin: FastifyASyncPlugin = (fastify) => {
+export const plugin: FastifyASyncPlugin = async (fastify) => {
   const options: FastifyAwsPowertoolsOptions = {
-    loggerServiceOptions: {
+    loggerOptions: {
       logEvent: true,
       clearState: true,
     },
@@ -45,6 +44,24 @@ export const plugin: FastifyASyncPlugin = (fastify) => {
 };
 ```
 
+Also, available each plugin separately:
+
+```typescript
+import { fastifyAwsPowertoolsLogger } from 'fastify-aws-powertools';
+import type { FastifyAwsPowertoolsOptions } from 'fastify-aws-powertools';
+import type { FastifyASyncPlugin } from 'fastify';
+
+export const plugin: FastifyASyncPlugin = async (fastify) => {
+  const options: FastifyAwsPowertoolsOptions = {
+    loggerOptions: {
+      logEvent: true,
+      clearState: true,
+    }
+  };
+  fastify.register(fastifyAwsPowertoolsLogger, options);
+};
+```
+
 ### Options
 
 | Property              | Description                                                                                                             | Default     |
@@ -52,9 +69,9 @@ export const plugin: FastifyASyncPlugin = (fastify) => {
 | logger                | Logger instance                                                                                                         | `undefined` |
 | metrics               | Metrics instance                                                                                                        | `undefined` |
 | tracer                | Tracer instance                                                                                                         | `undefined` |
-| loggerServiceOptions  | `{logEvent?: boolean; clearState?: boolean;}`                                                                           | `undefined` |
-| metricsServiceOptions | `{throwOnEmptyMetrics?: boolean; defaultDimensions?: Record<[key: string]: string>; captureColdStartMetric?: boolean;}` | `undefined` |
-| tracerServiceOptions  | `{captureResponse?: boolean;}`                                                                                          | `undefined` |
+| loggerOptions  | `{logEvent?: boolean; resetKeys?: boolean;}`                                                                           | `undefined` |
+| metricsOptions | `{throwOnEmptyMetrics?: boolean; defaultDimensions?: Record<[key: string]: string>; captureColdStartMetric?: boolean;}` | `undefined` |
+| tracerOptions  | `{captureResponse?: boolean;}`                                                                                          | `undefined` |
 
 Logger, Metrics, and Tracer instances will be provided automatically if no options are provided.
 

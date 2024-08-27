@@ -1,15 +1,15 @@
 import type { Metrics } from '@aws-lambda-powertools/metrics';
+import type { ExtraOptions } from '@aws-lambda-powertools/metrics/types';
 import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
 import { isAwsLambdaRequest } from '../helpers';
-import type { MetricsServiceOptions } from '../types';
 
 export function metricsService(
   target: Metrics | Metrics[],
-  options: MetricsServiceOptions = {},
+  options: ExtraOptions = {},
 ) {
   const metricsInstances = Array.isArray(target) ? target : [target];
 
