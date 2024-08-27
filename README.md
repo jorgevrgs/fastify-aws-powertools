@@ -34,10 +34,10 @@ export const plugin: FastifyASyncPlugin = (fastify) => {
       logEvent: true,
       clearState: true,
     },
-    metricsOptions: {
+    metricsServiceOptions: {
       captureColdStartMetric: true,
     },
-    tracerOptions: {
+    tracerServiceOptions: {
       captureResponse: true,
     },
   };
