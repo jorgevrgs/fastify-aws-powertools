@@ -3,9 +3,11 @@ import { tracerService } from '../services';
 import type { FastifyAwsPowertoolsTracerOptions } from '../types';
 
 export const tracerHook: FastifyPluginAsync<
-  Required<Pick<FastifyAwsPowertoolsTracerOptions, 'tracer' | 'tracerOptions'>>
+  Required<
+    Pick<FastifyAwsPowertoolsTracerOptions, 'tracer' | 'tracerServiceOptions'>
+  >
 > = async (fastify, opts) => {
-  const { tracer, tracerOptions: options } = opts;
+  const { tracer, tracerServiceOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = tracerService(tracer, options);
 

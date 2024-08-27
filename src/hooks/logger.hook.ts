@@ -3,9 +3,11 @@ import { loggerService } from '../services';
 import type { FastifyAwsPowertoolsLoggerOptions } from '../types';
 
 export const loggerHook: FastifyPluginAsync<
-  Required<Pick<FastifyAwsPowertoolsLoggerOptions, 'logger' | 'loggerOptions'>>
+  Required<
+    Pick<FastifyAwsPowertoolsLoggerOptions, 'logger' | 'loggerServiceOptions'>
+  >
 > = async (fastify, opts) => {
-  const { logger, loggerOptions: options } = opts;
+  const { logger, loggerServiceOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = loggerService(logger, options);
 

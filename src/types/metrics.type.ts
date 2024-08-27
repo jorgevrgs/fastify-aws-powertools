@@ -28,7 +28,7 @@ export interface MetricRecords {
 }
 
 export type FastifyAwsPowertoolsMetricsOptions = {
-  metricsOptions?: ExtraOptions;
+  metricsServiceOptions?: ExtraOptions;
   metricsInstanceOptions?: MetricsOptions;
   metrics?: Metrics;
 };

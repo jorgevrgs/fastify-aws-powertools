@@ -23,7 +23,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
     app = Fastify();
     app
       .register(fp(fastifyAwsPowertool), {
-        tracerOptions: { captureResponse: false },
+        tracerServiceOptions: { captureResponse: false },
         tracer,
       })
       .get('/', async (_request, _reply) => {
