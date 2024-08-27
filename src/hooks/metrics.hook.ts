@@ -4,13 +4,10 @@ import type { FastifyAwsPowertoolsMetricsOptions } from '../types';
 
 export const metricsHook: FastifyPluginAsync<
   Required<
-    Pick<
-      FastifyAwsPowertoolsMetricsOptions,
-      'metrics' | 'metricsServiceOptions'
-    >
+    Pick<FastifyAwsPowertoolsMetricsOptions, 'metrics' | 'metricsOptions'>
   >
 > = async (fastify, opts) => {
-  const { metrics, metricsServiceOptions: options } = opts;
+  const { metrics, metricsOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = metricsService(metrics, options);
 

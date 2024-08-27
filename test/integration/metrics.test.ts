@@ -34,7 +34,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
     app = Fastify();
     app
       .register(fp(fastifyAwsPowertool), {
-        metricsServiceOptions: {
+        metricsOptions: {
           captureColdStartMetric: true,
         },
         metrics,
@@ -108,7 +108,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
       app = Fastify();
       app
         .register(fp(fastifyAwsPowertool), {
-          metricsServiceOptions: {
+          metricsOptions: {
             captureColdStartMetric: false,
           },
           metrics,

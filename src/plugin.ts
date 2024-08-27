@@ -11,13 +11,13 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
 > = async (fastify, opts) => {
   const {
     logger = new Logger(opts.loggerInstanceOptions),
-    loggerServiceOptions = {},
+    loggerOptions = {},
   } = opts;
 
   fastify
     .decorateRequest('logger', null)
     .decorate('logger', logger)
-    .register(fp(loggerHook), { logger, loggerServiceOptions });
+    .register(fp(loggerHook), { logger, loggerOptions });
 };
 
 const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
@@ -25,7 +25,7 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
 > = async (fastify, opts) => {
   const {
     metrics = new Metrics(opts.metricsInstanceOptions),
-    metricsServiceOptions = {},
+    metricsOptions = {},
   } = opts;
 
   fastify
@@ -33,7 +33,7 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
     .decorate('metrics', metrics)
     .register(fp(metricsHook), {
       metrics,
-      metricsServiceOptions,
+      metricsOptions,
     });
 };
 
@@ -42,13 +42,13 @@ const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
 > = async (fastify, opts) => {
   const {
     tracer = new Tracer(opts.tracerInstanceOptions),
-    tracerServiceOptions = {},
+    tracerOptions = {},
   } = opts;
 
   fastify
     .decorateRequest('tracer', null)
     .decorate('tracer', tracer)
-    .register(fp(tracerHook), { tracer, tracerServiceOptions });
+    .register(fp(tracerHook), { tracer, tracerOptions });
 };
 
 export const fastifyAwsPowertools: FastifyPluginAsync<

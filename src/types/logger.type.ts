@@ -5,7 +5,7 @@ import type {
 } from '@aws-lambda-powertools/logger/lib/cjs/types/Logger';
 
 export type FastifyAwsPowertoolsLoggerOptions = {
-  loggerServiceOptions?: InjectLambdaContextOptions;
+  loggerOptions?: InjectLambdaContextOptions;
   loggerInstanceOptions?: ConstructorOptions;
   logger?: Logger;
 };

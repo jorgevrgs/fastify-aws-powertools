@@ -5,7 +5,7 @@ import type {
 } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
 
 export type FastifyAwsPowertoolsTracerOptions = {
-  tracerServiceOptions?: CaptureLambdaHandlerOptions;
+  tracerOptions?: CaptureLambdaHandlerOptions;
   tracerInstanceOptions?: TracerOptions;
   tracer?: Tracer;
 };
