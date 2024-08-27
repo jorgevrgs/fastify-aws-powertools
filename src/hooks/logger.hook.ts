@@ -1,18 +1,11 @@
-import { Logger } from '@aws-lambda-powertools/logger';
 import type { FastifyPluginAsync } from 'fastify';
 import { loggerService } from '../services';
 import type { FastifyAwsPowertoolsLoggerOptions } from '../types';
 
 export const loggerHook: FastifyPluginAsync<
-  FastifyAwsPowertoolsLoggerOptions
+  Required<Pick<FastifyAwsPowertoolsLoggerOptions, 'logger' | 'loggerOptions'>>
 > = async (fastify, opts) => {
-  const { logger: baseLogger, loggerOptions: options } = opts;
-
-  let logger = baseLogger as Logger;
-
-  if (typeof logger === 'undefined') {
-    logger = new Logger();
-  }
+  const { logger, loggerOptions: options } = opts;
 
   const { onRequest, onResponse, onError } = loggerService(logger, options);
 

@@ -1,15 +1,15 @@
 import type { Tracer } from '@aws-lambda-powertools/tracer';
+import type { CaptureLambdaHandlerOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
 import type { Segment, Subsegment } from 'aws-xray-sdk-core';
 import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import type { TracerServiceOptions } from '../types';
 
 export function tracerService(
   target: Tracer,
-  options: TracerServiceOptions = {},
+  options: CaptureLambdaHandlerOptions = {},
 ) {
   const { captureResponse = true } = options;
 

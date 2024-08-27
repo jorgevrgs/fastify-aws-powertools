@@ -52,7 +52,7 @@ export const plugin: FastifyASyncPlugin = (fastify) => {
 | logger                | Logger instance                                                                                                         | `undefined` |
 | metrics               | Metrics instance                                                                                                        | `undefined` |
 | tracer                | Tracer instance                                                                                                         | `undefined` |
-| loggerServiceOptions  | `{logEvent?: boolean; clearState?: boolean;}`                                                                           | `undefined` |
+| loggerServiceOptions  | `{logEvent?: boolean; resetKeys?: boolean;}`                                                                           | `undefined` |
 | metricsServiceOptions | `{throwOnEmptyMetrics?: boolean; defaultDimensions?: Record<[key: string]: string>; captureColdStartMetric?: boolean;}` | `undefined` |
 | tracerServiceOptions  | `{captureResponse?: boolean;}`                                                                                          | `undefined` |
 
