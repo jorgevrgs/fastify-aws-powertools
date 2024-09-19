@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "aws-lambda": "^1.0.7",
-    "aws-xray-sdk": "^3.10.1",
+    "aws-xray-sdk-core": "^3.10.1",
     "fastify": "^4.6.0",
     "pino": "^9.3.2",
     "ts-node": "^10.9.2",
