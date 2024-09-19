@@ -6,6 +6,8 @@ import type {
 
 export type FastifyAwsPowertoolsLoggerOptions = {
   loggerOptions?: InjectLambdaContextOptions;
+} & ({
+  logger: Logger;
+} | {
   loggerInstanceOptions?: ConstructorOptions;
-  logger?: Logger;
-};
+});

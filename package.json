@@ -1,6 +1,6 @@
 {
   "name": "fastify-aws-powertools",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "exports": {
     "node": {
@@ -32,10 +32,9 @@
   },
   "homepage": "https://github.com/jorgevrgs/fastify-aws-powertools#readme",
   "dependencies": {
-    "@aws-lambda-powertools/logger": "^2.7.0",
-    "@aws-lambda-powertools/metrics": "^2.7.0",
-    "@aws-lambda-powertools/tracer": "^2.7.0",
-    "aws-xray-sdk-core": "^3.5.4",
+    "@aws-lambda-powertools/logger": "2.7.0",
+    "@aws-lambda-powertools/metrics": "2.7.0",
+    "@aws-lambda-powertools/tracer": "2.7.0",
     "fastify-plugin": "^4.5.1"
   },
   "devDependencies": {
@@ -47,6 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "aws-lambda": "^1.0.7",
+    "aws-xray-sdk-core": "^3.10.1",
     "fastify": "^4.6.0",
     "pino": "^9.3.2",
     "ts-node": "^10.9.2",
