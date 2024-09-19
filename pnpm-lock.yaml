@@ -17,9 +17,6 @@ importers:
       '@aws-lambda-powertools/tracer':
         specifier: 2.7.0
         version: 2.7.0
-      aws-xray-sdk:
-        specifier: ^3.10.1
-        version: 3.10.1
       fastify-plugin:
         specifier: ^4.5.1
         version: 4.5.1
@@ -48,6 +45,9 @@ importers:
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
+      aws-xray-sdk:
+        specifier: ^3.10.1
+        version: 3.10.1
       fastify:
         specifier: ^4.6.0
         version: 4.6.0
