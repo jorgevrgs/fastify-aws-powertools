@@ -6,6 +6,11 @@ import type {
 
 export type FastifyAwsPowertoolsTracerOptions = {
   tracerOptions?: CaptureLambdaHandlerOptions;
-  tracerInstanceOptions?: TracerOptions;
-  tracer?: Tracer;
-};
+} & (
+  | {
+      tracer: Tracer;
+    }
+  | {
+      tracerInstanceOptions?: TracerOptions;
+    }
+);

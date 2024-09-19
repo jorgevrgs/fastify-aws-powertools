@@ -1,6 +1,10 @@
-export * from './logger';
+export * from './classes';
+
 export {
   fastifyAwsPowertools as default,
   fastifyAwsPowertools,
-  fastifyAwsPowertoolsPlugin,
+  fastifyAwsPowertoolsPlugin
 } from './plugin';
+
+export * from './plugins';
+
