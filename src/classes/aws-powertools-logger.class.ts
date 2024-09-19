@@ -1,7 +1,7 @@
 import type { Logger as PowertoolsLogger } from '@aws-lambda-powertools/logger';
-import { LogLevel } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
+import type { LogLevel } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
 import type { FastifyBaseLogger } from 'fastify';
-import type { Bindings, ChildLoggerOptions, LevelWithSilent } from 'pino';
+import type { Bindings, ChildLoggerOptions } from 'pino';
 
 /**
  * @see https://docs.powertools.aws.dev/lambda/typescript/latest/core/logger/#log-levels
@@ -14,11 +14,11 @@ const powertoolsToFastifyLevel = {
   CRITICAL: 'fatal',
   SILENT: 'silent',
   // ???: 'trace'
-} as const satisfies Record<Uppercase<LogLevel>, LevelWithSilent>;
+};
 
-const fastifyToPowertoolsLevel = Object.fromEntries<Uppercase<LogLevel>>(
-  Object.entries<LevelWithSilent>(powertoolsToFastifyLevel).map(
-    ([key, value]) => [value, key as Uppercase<LogLevel>],
+const fastifyToPowertoolsLevel = Object.fromEntries(
+  Object.entries(powertoolsToFastifyLevel).map(
+    ([key, value]) => [value, key],
   ),
 );
 
@@ -38,7 +38,7 @@ export class AwsPowertoolsLogger implements FastifyBaseLogger {
     const { level: logLevel } = options ?? {};
 
     const logger = this.logger.createChild({
-      logLevel: fastifyToPowertoolsLevel[logLevel ?? 'info'],
+      logLevel: fastifyToPowertoolsLevel[logLevel ?? 'info'] as LogLevel,
     });
     logger.appendPersistentKeys(bindings);
 
