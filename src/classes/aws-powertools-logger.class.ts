@@ -1,5 +1,5 @@
 import type { Logger as PowertoolsLogger } from '@aws-lambda-powertools/logger';
-import type { LogLevel } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
+import { LogLevel } from '@aws-lambda-powertools/logger/lib/cjs/types/Log';
 import type { FastifyBaseLogger } from 'fastify';
 import type { Bindings, ChildLoggerOptions, LevelWithSilent } from 'pino';
 

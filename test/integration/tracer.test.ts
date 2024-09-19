@@ -1,12 +1,12 @@
-import { randomUUID } from 'node:crypto';
 import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { Segment, Subsegment } from 'aws-xray-sdk-core';
+import { Segment, Subsegment } from 'aws-xray-sdk';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
+import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
 import { dummyContext } from '../fixtures/context';

@@ -1,6 +1,6 @@
 import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { CaptureLambdaHandlerOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
-import type { Segment, Subsegment } from 'aws-xray-sdk-core';
+import type { Segment, Subsegment } from 'aws-xray-sdk';
 import type {
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
