@@ -1,2 +1,2 @@
-export * from './aws-powertools-logger.class';
+export * from './logger.class';
 

@@ -142,6 +142,13 @@ export const handler = async (event: any, context: any) =>
 Additional examples can be found in the [examples](./examples) folder.
 
 ```typescript
+import fastifyAwsPowertoolsPlugin, { type FastifyAwsPowertoolsOptions, Logger as FastifyLogger } from 'fastify-aws-powertools';
+import { Logger } from '@aws-lambda-powertools/logger';
+import { Metrics } from '@aws-lambda-powertools/metrics';
+import { Tracer } from '@aws-lambda-powertools/tracer';
+import { Fastify, type FastifyASyncPlugin } from 'fastify';
+
+
 const serviceName = 'my-service';
 
 const logger = new Logger({
@@ -180,7 +187,7 @@ export const myPlugin: FastifyASyncPlugin = async (fastify) => {
   fastify.register(fastifyAwsPowertoolsPlugin, options);
 };
 
-const logger = new AwsPowerToolsLogger({
+const logger = new FastifyLogger({
   serviceName
 });
 

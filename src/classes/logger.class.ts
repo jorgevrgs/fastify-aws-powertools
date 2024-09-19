@@ -25,7 +25,7 @@ const fastifyToPowertoolsLevel = Object.fromEntries(
 /**
  * Provides a logger that is compatible with Fastify's logger interface
  */
-export class AwsPowertoolsLogger implements FastifyBaseLogger {
+export class Logger implements FastifyBaseLogger {
   level: string;
 
   constructor(private readonly logger: PowertoolsLogger) {
@@ -42,7 +42,7 @@ export class AwsPowertoolsLogger implements FastifyBaseLogger {
     });
     logger.appendPersistentKeys(bindings);
 
-    return new AwsPowertoolsLogger(logger);
+    return new Logger(logger);
   }
 
   fatal<T extends object>(obj: T, msg?: string, ...args: Array<unknown>) {
