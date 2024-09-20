@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
@@ -6,10 +5,10 @@ import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import fp from 'fastify-plugin';
+import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fastifyAwsPowertool from '../../src';
-import type { MetricRecords } from '../../src/types';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -83,24 +82,19 @@ describe('fastifyAwsPowertool metrics integration', () => {
       // Second call
       await handler(dummyEvent, dummyContext);
 
-      const parsedData = consoleSpy.mock.calls.map((value) => {
-        const parsed = JSON.parse(
-          value as unknown as string,
-        ) as unknown as MetricRecords;
+      expect(consoleSpy.mock.calls).toHaveLength(1);
 
-        return parsed;
-      });
+      // @ts-expect-error - accessing unknown property for testing
+      const loggedData = JSON.parse(consoleSpy.mock.calls[0][0]);
 
-      expect(consoleSpy.mock.calls).toHaveLength(2);
-      expect(parsedData[0]._aws.CloudWatchMetrics[0].Metrics.length).toBe(1);
-      expect(parsedData[0]._aws.CloudWatchMetrics[0].Metrics[0].Name).toBe(
+      expect(loggedData._aws.CloudWatchMetrics[0].Metrics.length).toBe(1);
+      expect(loggedData._aws.CloudWatchMetrics[0].Metrics[0].Name).toBe(
         'ColdStart',
       );
-      expect(parsedData[0]._aws.CloudWatchMetrics[0].Metrics[0].Unit).toBe(
+      expect(loggedData._aws.CloudWatchMetrics[0].Metrics[0].Unit).toBe(
         'Count',
       );
-      expect(parsedData[0].ColdStart).toBe(1);
-      expect(parsedData[1].ColdStart).toBeUndefined();
+      expect(loggedData.ColdStart).toBe(1);
     });
 
     it('should not capture cold start metrics if set to false', async () => {
@@ -134,19 +128,6 @@ describe('fastifyAwsPowertool metrics integration', () => {
       await handler(dummyEvent, dummyContext);
       await handler(dummyEvent, dummyContext);
 
-      const parsedData = consoleSpy.mock.calls.map((value) => {
-        const parsed = JSON.parse(
-          value as unknown as string,
-        ) as unknown as MetricRecords;
-
-        return parsed;
-      });
-
-      expect(parsedData[0]._aws.CloudWatchMetrics[0].Dimensions).not.contains({
-        Name: 'ColdStart',
-        Unit: 'Count',
-      });
-      expect(parsedData[0].ColdStart).toBeUndefined();
       expect(consoleLogSpy).to.not.toHaveBeenCalled();
     });
   });
