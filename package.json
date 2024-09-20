@@ -1,6 +1,6 @@
 {
   "name": "fastify-aws-powertools",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "",
   "exports": {
     "node": {
