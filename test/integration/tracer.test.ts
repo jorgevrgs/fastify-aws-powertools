@@ -5,10 +5,9 @@ import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { Segment, Subsegment } from 'aws-xray-sdk-core';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
-import fp from 'fastify-plugin';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import fastifyAwsPowertool from '../../src';
+import { fastifyAwsPowertoolsTracerPlugin } from '../../src';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -19,16 +18,21 @@ describe('fastifyAwsPowertool tracer integration', () => {
   let tracer: Tracer;
 
   beforeEach(async () => {
+    vi.stubEnv('AWS_EXECUTION_ENV', 'AWS_Lambda_nodejs20.x');
+    vi.stubEnv('_HANDLER', 'index.handler');
+
     tracer = new Tracer({ enabled: false });
     app = Fastify();
+
     app
-      .register(fp(fastifyAwsPowertool), {
+      .register(fastifyAwsPowertoolsTracerPlugin, {
         tracerOptions: { captureResponse: false },
         tracer,
       })
       .get('/', async (_request, _reply) => {
         return 'OK';
       });
+
     proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
@@ -37,10 +41,11 @@ describe('fastifyAwsPowertool tracer integration', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.clearAllMocks();
   });
 
-  it('should be a function', () => {
-    expect(fastifyAwsPowertool).toBeInstanceOf(Function);
+  it('should be register a plugin', () => {
+    expect(app.hasPlugin('fastify-aws-powertools-tracer')).toBe(true);
   });
 
   it('when used while tracing is disabled, it does nothing', async () => {
@@ -94,5 +99,48 @@ describe('fastifyAwsPowertool tracer integration', () => {
 
     // Assess
     expect(putMetadataSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('when used while captureResponse set to false, it does not capture the response as metadata', async () => {
+    // Prepare
+    const tracer: Tracer = new Tracer();
+    vi.spyOn(tracer.provider, 'setSegment').mockImplementation(vi.fn());
+    const putMetadataSpy = vi.spyOn(tracer, 'putMetadata');
+
+    // Act
+    await handler({}, dummyContext);
+
+    // Assess
+    expect(putMetadataSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('when used while captureResponse set to true, it captures the response as metadata', async () => {
+    // Prepare
+    const tracer: Tracer = new Tracer();
+    vi.spyOn(tracer.provider, 'setSegment').mockImplementation(vi.fn());
+    const putMetadataSpy = vi.spyOn(tracer, 'putMetadata');
+
+    app = Fastify();
+    app
+      .register(fastifyAwsPowertoolsTracerPlugin, {
+        tracerOptions: { captureResponse: true },
+        tracer,
+      })
+      .get('/', async (_request, _reply) => {
+        return { foo: 'bar' };
+      });
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+    handler = async (event, context) => proxy(event, context);
+    await app.ready();
+
+    // Act
+    await handler({}, dummyContext);
+
+    // Assess
+    expect(putMetadataSpy).toHaveBeenCalledTimes(1);
+    expect(putMetadataSpy).toHaveBeenCalledWith('index.handler response', {
+      foo: 'bar',
+    });
   });
 });
