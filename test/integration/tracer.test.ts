@@ -2,7 +2,11 @@ import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { Segment, Subsegment } from 'aws-xray-sdk-core';
+import {
+  Segment,
+  Subsegment,
+  setContextMissingStrategy,
+} from 'aws-xray-sdk-core';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
@@ -168,5 +172,89 @@ describe('fastifyAwsPowertool tracer integration', () => {
     expect(putMetadataSpy).toHaveBeenCalledWith('index.handler response', {
       foo: 'bar',
     });
+  });
+
+  it('when used while POWERTOOLS_TRACER_CAPTURE_ERROR is set to false, it does not capture the exceptions', async () => {
+    // Prepare
+    vi.stubEnv('POWERTOOLS_TRACER_CAPTURE_ERROR', 'false');
+    const tracer: Tracer = new Tracer();
+    const newSubsegment: Segment | Subsegment | undefined = new Subsegment(
+      '## index.handler',
+    );
+    const setSegmentSpy = vi
+      .spyOn(tracer.provider, 'setSegment')
+      .mockImplementation(vi.fn());
+
+    vi.spyOn(tracer.provider, 'getSegment').mockImplementation(
+      () => newSubsegment,
+    );
+
+    setContextMissingStrategy(() => null);
+    const addErrorSpy = vi.spyOn(newSubsegment, 'addError');
+    const addErrorFlagSpy = vi.spyOn(newSubsegment, 'addErrorFlag');
+
+    app = Fastify();
+    app
+      .register(fastifyAwsPowertoolsTracerPlugin, {
+        tracerOptions: { captureResponse: true },
+        tracer,
+      })
+      .get('/', async (_request, _reply) => {
+        throw new Error('Exception thrown!');
+      });
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+    // Act & Assess
+    await expect(handler({}, dummyContext)).resolves.toMatchObject({
+      statusCode: 500,
+    });
+    expect(setSegmentSpy).toHaveBeenCalledTimes(2);
+    expect('cause' in newSubsegment).toBe(false);
+    expect(addErrorFlagSpy).toHaveBeenCalledTimes(1);
+    expect(addErrorSpy).toHaveBeenCalledTimes(0);
+    expect.assertions(5);
+  });
+
+  it('when used with standard config, it captures the exception correctly', async () => {
+    // Prepare
+    const tracer: Tracer = new Tracer();
+    const newSubsegment: Segment | Subsegment | undefined = new Subsegment(
+      '## index.handler',
+    );
+    const setSegmentSpy = vi
+      .spyOn(tracer.provider, 'setSegment')
+      .mockImplementation(vi.fn());
+
+    vi.spyOn(tracer.provider, 'getSegment').mockImplementation(
+      () => newSubsegment,
+    );
+
+    setContextMissingStrategy(() => null);
+    const addErrorSpy = vi.spyOn(newSubsegment, 'addError');
+    const addErrorFlagSpy = vi.spyOn(newSubsegment, 'addErrorFlag');
+
+    app = Fastify();
+    app
+      .register(fastifyAwsPowertoolsTracerPlugin, {
+        tracerOptions: { captureResponse: true },
+        tracer,
+      })
+      .get('/', async (_request, _reply) => {
+        throw new Error('Exception thrown!');
+      });
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+    // Act & Assess
+    await expect(handler({}, dummyContext)).resolves.toMatchObject({
+      statusCode: 500,
+    });
+    expect(setSegmentSpy).toHaveBeenCalledTimes(2);
+    expect('cause' in newSubsegment).toBe(true);
+    expect(addErrorSpy).toHaveBeenCalledTimes(1);
+    expect(addErrorSpy).toHaveBeenCalledWith(
+      new Error('Exception thrown!'),
+      false,
+    );
+    expect.assertions(5);
   });
 });
