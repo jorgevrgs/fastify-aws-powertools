@@ -143,4 +143,30 @@ describe('fastifyAwsPowertool tracer integration', () => {
       foo: 'bar',
     });
   });
+
+  it('when used with standard config, it captures the response as metadata', async () => {
+    // Prepare
+    const tracer: Tracer = new Tracer();
+    vi.spyOn(tracer.provider, 'setSegment').mockImplementation(vi.fn());
+    const putMetadataSpy = vi.spyOn(tracer, 'putMetadata');
+
+    app = Fastify();
+    app
+      .register(fastifyAwsPowertoolsTracerPlugin, {
+        tracer,
+      })
+      .get('/', async (_request, _reply) => {
+        return { foo: 'bar' };
+      });
+    proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+    // Act
+    await handler({}, dummyContext);
+
+    // Assess
+    expect(putMetadataSpy).toHaveBeenCalledTimes(1);
+    expect(putMetadataSpy).toHaveBeenCalledWith('index.handler response', {
+      foo: 'bar',
+    });
+  });
 });

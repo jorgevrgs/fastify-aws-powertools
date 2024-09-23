@@ -12,7 +12,7 @@ export function tracerService(
   target: Tracer,
   options: CaptureLambdaHandlerOptions = {},
 ) {
-  const { captureResponse = false } = options;
+  const { captureResponse = true } = options;
 
   let lambdaSegment: Segment;
   let handlerSegment: Subsegment;
