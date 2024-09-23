@@ -231,7 +231,6 @@ describe('fastifyAwsPowertool tracer integration', () => {
 
     setContextMissingStrategy(() => null);
     const addErrorSpy = vi.spyOn(newSubsegment, 'addError');
-    const addErrorFlagSpy = vi.spyOn(newSubsegment, 'addErrorFlag');
 
     app = Fastify();
     app
