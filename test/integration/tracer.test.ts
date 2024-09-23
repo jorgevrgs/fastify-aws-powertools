@@ -12,7 +12,7 @@ import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fastifyAwsPowertoolsTracerPlugin } from '../../src';
-import { invokeCloseFunctions } from '../../src/helpers';
+import { invokeCleanUpFunctions } from '../../src/helpers';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -382,7 +382,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
           preHandler: async (request, reply) => {
             // @ts-expect-error missing decorator
             if (request.awsLambda.event.idx === 1) {
-              await invokeCloseFunctions(request);
+              await invokeCleanUpFunctions(request);
 
               reply.send('foo');
             }

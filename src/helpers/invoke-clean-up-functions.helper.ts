@@ -7,7 +7,7 @@ import {
 } from '../constants';
 import { isNotNullObject } from './is-aws-lambda-request';
 
-export const invokeCloseFunctions = async (request: FastifyRequest) => {
+export const invokeCleanUpFunctions = async (request: FastifyRequest) => {
   const cleanupFunctionNames = [LOGGER_KEY, METRICS_KEY, TRACER_KEY];
 
   for (const functionName of cleanupFunctionNames) {
