@@ -2,10 +2,13 @@ import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { CaptureLambdaHandlerOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
 import type { Segment, Subsegment } from 'aws-xray-sdk-core';
 import type {
+  FastifyRequest,
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
+  onSendAsyncHookHandler,
 } from 'fastify';
+import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../constants';
 
 export function tracerService(
   target: Tracer,
@@ -15,6 +18,13 @@ export function tracerService(
 
   let lambdaSegment: Segment;
   let handlerSegment: Subsegment;
+
+  const setCleanupFunction = (request: FastifyRequest) => {
+    request[POWERTOOLS_REQUEST_KEY] = {
+      ...request[POWERTOOLS_REQUEST_KEY],
+      [TRACER_KEY]: close,
+    };
+  };
 
   const open = (): void => {
     const segment = target.getSegment();
@@ -29,7 +39,7 @@ export function tracerService(
       `## ${process.env._HANDLER}`,
     );
 
-    target.setSegment(handlerSegment as never);
+    target.setSegment(handlerSegment);
   };
 
   const close = (): void => {
@@ -41,7 +51,8 @@ export function tracerService(
       handlerSegment.close();
     } catch (error) {
       console.warn(
-        `Failed to close or serialize segment, ${handlerSegment.name}. We are catching the error but data might be lost.`,
+        'Failed to close or serialize segment %s. We are catching the error but data might be lost.',
+        handlerSegment.name,
         error,
       );
     }
@@ -49,26 +60,48 @@ export function tracerService(
     target.setSegment(lambdaSegment);
   };
 
-  const onRequestHook: onRequestAsyncHookHandler = async (_request, _reply) => {
-    if (target.isTracingEnabled()) {
-      open();
-
-      target.annotateColdStart();
-      target.addServiceNameAnnotation();
+  const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
+    if (!target.isTracingEnabled()) {
+      return;
     }
+
+    open();
+
+    setCleanupFunction(request);
+    target.annotateColdStart();
+    target.addServiceNameAnnotation();
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async (
+  const onResponseHook: onResponseAsyncHookHandler = async () => {
+    if (!target.isTracingEnabled()) {
+      return;
+    }
+
+    close();
+  };
+
+  const onSendHook: onSendAsyncHookHandler<unknown> = async (
     _request,
-    reply,
+    _reply,
+    payload,
   ) => {
-    if (target.isTracingEnabled()) {
-      if (captureResponse) {
-        target.addResponseAsMetadata(reply.raw, process.env._HANDLER);
+    if (!target.isTracingEnabled()) {
+      return payload;
+    }
+
+    if (captureResponse && typeof payload === 'string') {
+      let data = '';
+
+      try {
+        data = JSON.parse(payload);
+      } catch (_error) {
+        data = payload;
       }
 
-      close();
+      target.addResponseAsMetadata(data, process.env._HANDLER);
     }
+
+    return payload;
   };
 
   const onErrorHook: onErrorAsyncHookHandler = async (
@@ -76,18 +109,17 @@ export function tracerService(
     _reply,
     error,
   ) => {
-    if (target.isTracingEnabled()) {
-      if (error) {
-        target.addErrorAsMetadata(error as Error);
-      }
-
-      close();
+    if (!target.isTracingEnabled()) {
+      return;
     }
+
+    target.addErrorAsMetadata(error as Error);
   };
 
   return {
     onRequest: onRequestHook,
-    onResponse: onResponseHook,
+    onSend: onSendHook,
     onError: onErrorHook,
+    onResponse: onResponseHook,
   };
 }

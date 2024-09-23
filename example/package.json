@@ -31,7 +31,7 @@
     "aws-cdk-lib": "2.43.0",
     "aws-xray-sdk-core": "3.3.7",
     "constructs": "10.1.109",
-    "fastify": "4.6.0",
+    "fastify": "4.28.1",
     "source-map-support": "0.5.21"
   }
 }

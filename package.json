@@ -1,6 +1,6 @@
 {
   "name": "fastify-aws-powertools",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "exports": {
     "node": {
@@ -47,7 +47,7 @@
     "@typescript-eslint/parser": "^6.7.3",
     "aws-lambda": "^1.0.7",
     "aws-xray-sdk-core": "^3.10.1",
-    "fastify": "^4.6.0",
+    "fastify": "^4.28.1",
     "pino": "^9.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
@@ -55,6 +55,6 @@
   },
   "peerDependencies": {
     "@fastify/aws-lambda": "^3.1.3",
-    "fastify": "^4.6.0"
+    "fastify": "^4.28.1"
   }
 }
