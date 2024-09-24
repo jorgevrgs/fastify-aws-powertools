@@ -1,4 +1,8 @@
-import { MetricUnit, Metrics } from '@aws-lambda-powertools/metrics';
+import {
+  MetricResolution,
+  MetricUnit,
+  Metrics,
+} from '@aws-lambda-powertools/metrics';
 import type { ExtraOptions } from '@aws-lambda-powertools/metrics/types';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
@@ -412,6 +416,118 @@ describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
 
       // Assess
       expect(publishStoredMetricsSpy).toBeCalledTimes(2);
+    });
+  });
+
+  describe('Metrics resolution', () => {
+    it('serialized metrics in EMF format should not contain `StorageResolution` as key if `60` is set', async () => {
+      // Prepare
+      const metrics = new Metrics({
+        namespace: 'serverlessAirline',
+        serviceName: 'orders',
+      });
+
+      // biome-ignore  lint/complexity/useLiteralKeys: This needs to be accessed with literal key for testing
+      const consoleSpy = vi.spyOn(metrics['console'], 'log');
+
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsMetricsPlugin, {
+          metrics,
+        })
+        .get('/', async (request, _reply) => {
+          request.metrics.addMetric(
+            'successfulBooking',
+            MetricUnit.Count,
+            1,
+            MetricResolution.Standard,
+          );
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(consoleSpy).toHaveBeenCalledWith(
+        JSON.stringify({
+          _aws: {
+            Timestamp: 1466424490000,
+            CloudWatchMetrics: [
+              {
+                Namespace: 'serverlessAirline',
+                Dimensions: [['service']],
+                Metrics: [
+                  {
+                    Name: 'successfulBooking',
+                    Unit: 'Count',
+                  },
+                ],
+              },
+            ],
+          },
+          service: 'orders',
+          successfulBooking: 1,
+        }),
+      );
+    });
+
+    it('Should be StorageResolution `1` if MetricResolution is set to `High`', async () => {
+      // Prepare
+      const metrics = new Metrics({
+        namespace: 'serverlessAirline',
+        serviceName: 'orders',
+      });
+      // biome-ignore  lint/complexity/useLiteralKeys: This needs to be accessed with literal key for testing
+      const consoleSpy = vi.spyOn(metrics['console'], 'log');
+
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsMetricsPlugin, {
+          metrics,
+        })
+        .get('/', async (request, _reply) => {
+          request.metrics.addMetric(
+            'successfulBooking',
+            MetricUnit.Count,
+            1,
+            MetricResolution.High,
+          );
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(consoleSpy).toHaveBeenCalledWith(
+        JSON.stringify({
+          _aws: {
+            Timestamp: 1466424490000,
+            CloudWatchMetrics: [
+              {
+                Namespace: 'serverlessAirline',
+                Dimensions: [['service']],
+                Metrics: [
+                  {
+                    Name: 'successfulBooking',
+                    Unit: 'Count',
+                    StorageResolution: 1,
+                  },
+                ],
+              },
+            ],
+          },
+          service: 'orders',
+          successfulBooking: 1,
+        }),
+      );
     });
   });
 });
