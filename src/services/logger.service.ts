@@ -13,7 +13,7 @@ export function loggerService(
   target: Logger | Logger[],
   options: InjectLambdaContextOptions = {},
 ) {
-  const { resetKeys, clearState } = options;
+  const { resetKeys, clearState, logEvent } = options;
 
   const isResetStateEnabled = clearState || resetKeys;
 
@@ -38,6 +38,7 @@ export function loggerService(
       }
 
       logger.addContext(request.awsLambda.context);
+      logger.logEventIfEnabled(request.awsLambda.event, logEvent);
     }
   };
 
