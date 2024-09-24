@@ -1,4 +1,4 @@
-import { Logger } from '@aws-lambda-powertools/logger';
+import type { Logger } from '@aws-lambda-powertools/logger';
 import type { InjectLambdaContextOptions } from '@aws-lambda-powertools/logger/lib/cjs/types/Logger';
 import type {
   onErrorAsyncHookHandler,
@@ -24,12 +24,7 @@ export function loggerService(
     }
 
     for (const logger of loggers) {
-      Logger.injectLambdaContextBefore(
-        logger,
-        request.awsLambda.event,
-        request.awsLambda.context,
-        options,
-      );
+      logger.addContext(request.awsLambda.context);
     }
   };
 
