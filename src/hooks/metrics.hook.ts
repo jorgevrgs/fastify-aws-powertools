@@ -4,9 +4,7 @@ import { metricsService } from '../services';
 import type { FastifyAwsPowertoolsMetricsOptions } from '../types';
 
 export const metricsHook: FastifyPluginAsync<
-  Required<
-    FastifyAwsPowertoolsMetricsOptions & {metrics: Metrics}
-  >
+  Required<FastifyAwsPowertoolsMetricsOptions & { metrics: Metrics }>
 > = async (fastify, opts) => {
   const { metrics, metricsOptions: options } = opts;
 
@@ -15,7 +13,7 @@ export const metricsHook: FastifyPluginAsync<
   fastify
     .addHook('onRequest', async (request) => {
       if (!request.metrics) {
-        request.metrics = Array.isArray(metrics) ? metrics[0] : metrics;
+        request.metrics = metrics;
       }
     })
     .addHook('onRequest', onRequest)
