@@ -1,10 +1,12 @@
 import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type { ExtraOptions } from '@aws-lambda-powertools/metrics/types';
 import type {
+  FastifyRequest,
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
+import { METRICS_KEY, POWERTOOLS_REQUEST_KEY } from '../constants';
 import { isAwsLambdaRequest } from '../helpers';
 
 export function metricsService(
@@ -15,6 +17,13 @@ export function metricsService(
 
   const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
     options;
+
+  const setCleanupFunction = (request: FastifyRequest) => {
+    request[POWERTOOLS_REQUEST_KEY] = {
+      ...request[POWERTOOLS_REQUEST_KEY],
+      [METRICS_KEY]: onResponseOrErrorHandler,
+    };
+  };
 
   const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
     if (!isAwsLambdaRequest(request)) {
@@ -37,6 +46,8 @@ export function metricsService(
         metrics.captureColdStartMetric();
       }
     }
+
+    setCleanupFunction(request);
   };
 
   const onResponseOrErrorHandler = () => {
