@@ -1,10 +1,10 @@
-import { randomUUID } from 'node:crypto';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
+import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fastifyAwsPowertoolsMetricsPlugin } from '../../src';
