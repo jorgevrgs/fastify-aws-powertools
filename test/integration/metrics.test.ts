@@ -1,18 +1,17 @@
+import { randomUUID } from 'node:crypto';
 import { Metrics } from '@aws-lambda-powertools/metrics';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
-import fp from 'fastify-plugin';
-import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import fastifyAwsPowertool from '../../src';
+import { fastifyAwsPowertoolsMetricsPlugin } from '../../src';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
-describe('fastifyAwsPowertool metrics integration', () => {
+describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
   let app: FastifyInstance;
   let metrics: Metrics;
   let proxy: PromiseHandler;
@@ -21,7 +20,20 @@ describe('fastifyAwsPowertool metrics integration', () => {
   // let consoleErrorSpy: SpyInstance;
   // let consoleWarnSpy: SpyInstance;
 
+  const event = {
+    foo: 'bar',
+    bar: 'baz',
+  };
+
   beforeEach(async () => {
+    vi.stubEnv(
+      '_X_AMZN_TRACE_ID',
+      'Root=1-5759e988-bd862e3fe1be46a994272793;Parent=557abcec3ee5a047;Sampled=1',
+    );
+    vi.stubEnv('AWS_LAMBDA_FUNCTION_NAME', 'my-lambda-function');
+    vi.stubEnv('AWS_LAMBDA_FUNCTION_MEMORY_SIZE', '128');
+    vi.stubEnv('POWERTOOLS_METRICS_NAMESPACE', 'hello-world');
+
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     vi.spyOn(console, 'warn').mockImplementation(vi.fn());
@@ -32,7 +44,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
 
     app = Fastify();
     app
-      .register(fp(fastifyAwsPowertool), {
+      .register(fastifyAwsPowertoolsMetricsPlugin, {
         metricsOptions: {
           captureColdStartMetric: true,
         },
@@ -60,8 +72,8 @@ describe('fastifyAwsPowertool metrics integration', () => {
     await app.close();
   });
 
-  it('should be a function', () => {
-    expect(fastifyAwsPowertool).toBeInstanceOf(Function);
+  it('should be a plugin', () => {
+    expect(app.hasPlugin('fastify-aws-powertools-metrics')).toBe(true);
   });
 
   describe('captureColdStartMetric', () => {
@@ -101,7 +113,7 @@ describe('fastifyAwsPowertool metrics integration', () => {
       // Prepare
       app = Fastify();
       app
-        .register(fp(fastifyAwsPowertool), {
+        .register(fastifyAwsPowertoolsMetricsPlugin, {
           metricsOptions: {
             captureColdStartMetric: false,
           },
@@ -129,6 +141,37 @@ describe('fastifyAwsPowertool metrics integration', () => {
       await handler(dummyEvent, dummyContext);
 
       expect(consoleLogSpy).to.not.toHaveBeenCalled();
+    });
+
+    it('should not throw on empty metrics if not set', async () => {
+      // Prepare
+      const metrics = new Metrics({
+        namespace: 'serverlessAirline',
+        serviceName: 'orders',
+      });
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsMetricsPlugin, {
+          metricsOptions: {
+            captureColdStartMetric: false,
+          },
+          metrics,
+        })
+        .get('/', async (request, _reply) => {
+          const coldStart = request.metrics?.getColdStart();
+          if (coldStart) {
+            return 'cold start';
+          }
+
+          return 'warm start';
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act & Assess
+      await expect(handler(event, dummyContext)).resolves.not.toThrow();
     });
   });
 });
