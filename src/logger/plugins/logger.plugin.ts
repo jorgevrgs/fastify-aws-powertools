@@ -2,9 +2,7 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import type {
   FastifyPluginAsync,
   FastifyRequest,
-  onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
-  onResponseAsyncHookHandler,
 } from 'fastify';
 import fp from 'fastify-plugin';
 import {
@@ -19,19 +17,17 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
 > = async (fastify, opts) => {
   const { loggerOptions: options = {} } = opts;
 
-  let logger: Logger;
+  let loggers: Logger[];
 
   if ('logger' in opts) {
-    logger = opts.logger;
+    loggers = Array.isArray(opts.logger) ? opts.logger : [opts.logger];
   } else {
-    logger = new Logger(opts.loggerInstanceOptions);
+    loggers = [new Logger(opts.loggerInstanceOptions)];
   }
 
   const { resetKeys, clearState, logEvent } = options;
 
   const isResetStateEnabled = clearState || resetKeys;
-
-  const loggers = Array.isArray(logger) ? logger : [logger];
 
   const setCleanupFunction = (request: FastifyRequest) => {
     request[POWERTOOLS_REQUEST_KEY] = {
@@ -46,11 +42,11 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
       return;
     }
 
-    for (const logger of loggers) {
-      if (isResetStateEnabled) {
-        setCleanupFunction(request);
-      }
+    if (isResetStateEnabled) {
+      setCleanupFunction(request);
+    }
 
+    for (const logger of loggers) {
       logger.addContext(request.awsLambda.context);
       logger.logEventIfEnabled(request.awsLambda.event, logEvent);
     }
@@ -64,32 +60,17 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     }
   };
 
-  const onResponseHook: onResponseAsyncHookHandler = async (
-    _request,
-    _reply,
-  ) => {
-    onResponseOrErrorHandler();
-  };
-
-  const onErrorHook: onErrorAsyncHookHandler = async (
-    _request,
-    _reply,
-    _error,
-  ) => {
-    onResponseOrErrorHandler();
-  };
-
   fastify
     .decorateRequest('logger', null)
-    .decorate('logger', logger)
+    .decorate('logger', loggers[0])
     .addHook('onRequest', async (request) => {
       if (!request.logger) {
-        request.logger = logger;
+        request.logger = loggers[0];
       }
     })
     .addHook('onRequest', onRequestHook)
-    .addHook('onResponse', onResponseHook)
-    .addHook('onError', onErrorHook);
+    .addHook('onResponse', onResponseOrErrorHandler)
+    .addHook('onError', onResponseOrErrorHandler);
 };
 
 export const fastifyAwsPowertoolsLoggerPlugin = fp(fastifyAwsPowertoolsLogger, {

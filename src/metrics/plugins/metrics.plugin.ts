@@ -2,9 +2,7 @@ import { Metrics } from '@aws-lambda-powertools/metrics';
 import type {
   FastifyPluginAsync,
   FastifyRequest,
-  onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
-  onResponseAsyncHookHandler,
 } from 'fastify';
 import fp from 'fastify-plugin';
 import {
@@ -19,15 +17,13 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
 > = async (fastify, opts) => {
   const { metricsOptions: options = {} } = opts;
 
-  let metrics: Metrics;
+  let metrics: Metrics[];
 
   if ('metrics' in opts) {
-    metrics = opts.metrics;
+    metrics = Array.isArray(opts.metrics) ? opts.metrics : [opts.metrics];
   } else {
-    metrics = new Metrics(opts.metricsInstanceOptions);
+    metrics = [new Metrics(opts.metricsInstanceOptions)];
   }
-
-  const metricsInstances = Array.isArray(metrics) ? metrics : [metrics];
 
   const { throwOnEmptyMetrics, defaultDimensions, captureColdStartMetric } =
     options;
@@ -45,19 +41,19 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
       return;
     }
 
-    for (const metrics of metricsInstances) {
-      metrics.setFunctionName(request.awsLambda.context.functionName);
+    for (const metric of metrics) {
+      metric.setFunctionName(request.awsLambda.context.functionName);
 
       if (throwOnEmptyMetrics) {
-        metrics.throwOnEmptyMetrics();
+        metric.throwOnEmptyMetrics();
       }
 
       if (typeof defaultDimensions !== 'undefined') {
-        metrics.setDefaultDimensions(defaultDimensions);
+        metric.setDefaultDimensions(defaultDimensions);
       }
 
       if (captureColdStartMetric) {
-        metrics.captureColdStartMetric();
+        metric.captureColdStartMetric();
       }
     }
 
@@ -65,37 +61,22 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
   };
 
   const onResponseOrErrorHandler = () => {
-    for (const metrics of metricsInstances) {
-      metrics.publishStoredMetrics();
+    for (const metric of metrics) {
+      metric.publishStoredMetrics();
     }
-  };
-
-  const onResponseHook: onResponseAsyncHookHandler = async (
-    _request,
-    _reply,
-  ) => {
-    onResponseOrErrorHandler();
-  };
-
-  const onErrorHook: onErrorAsyncHookHandler = async (
-    _request,
-    _reply,
-    _error,
-  ) => {
-    onResponseOrErrorHandler();
   };
 
   fastify
     .decorateRequest('metrics', null)
-    .decorate('metrics', metrics)
+    .decorate('metrics', metrics[0])
     .addHook('onRequest', async (request) => {
       if (!request.metrics) {
-        request.metrics = metrics;
+        request.metrics = metrics[0];
       }
     })
     .addHook('onRequest', onRequestHook)
-    .addHook('onResponse', onResponseHook)
-    .addHook('onError', onErrorHook);
+    .addHook('onResponse', onResponseOrErrorHandler)
+    .addHook('onError', onResponseOrErrorHandler);
 };
 
 export const fastifyAwsPowertoolsMetricsPlugin = fp(
