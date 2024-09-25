@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import type { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import type { MockInstance } from 'vitest';
@@ -106,8 +106,8 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
 
     it('adds the context to log messages when the feature is enabled in the Fastify plugin', async () => {
       // Prepare
-      app = Fastify();
       logger = new Logger();
+      app = Fastify();
       app
         .register(fastifyAwsPowertoolsLoggerPlugin, {
           logger,
@@ -138,7 +138,6 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       const logger1 = new Logger({ serviceName: 'parent' });
       const logger2 = logger1.createChild({ serviceName: 'child' });
       app = Fastify();
-      logger = new Logger();
       app
         .register(fastifyAwsPowertoolsLoggerPlugin, {
           logger: [logger1, logger2],
@@ -165,6 +164,75 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
         }),
       );
       expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'child',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
+
+    it('adds the context to the messages when the feature is enabled using the class method decorator', async () => {
+      // Prepare
+      const logger = new Logger();
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger,
+        })
+        .get('/', async (request, reply) => {
+          //
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      await app.ready();
+
+      class Test {
+        readonly #greeting: string;
+
+        public constructor(greeting: string) {
+          this.#greeting = greeting;
+        }
+
+        @logger.injectLambdaContext()
+        async handler(_event: unknown, context: Context) {
+          this.logGreeting();
+
+          proxy(event, context);
+        }
+
+        logGreeting() {
+          logger.info(this.#greeting);
+        }
+      }
+      const lambda = new Test('Hello, world!');
+      const handler = lambda.handler.bind(lambda);
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
+
+    it('propagates the context data to the child logger instances', () => {
+      // Prepare
+      const logger = new Logger();
+
+      // Act
+      logger.addContext(dummyContext);
+      const childLogger = logger.createChild({ serviceName: 'child' });
+      childLogger.info('Hello, world!');
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
         expect.objectContaining({
           message: 'Hello, world!',
           service: 'child',
