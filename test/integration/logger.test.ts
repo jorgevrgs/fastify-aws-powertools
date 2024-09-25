@@ -126,11 +126,15 @@ describe('fastifyAwsPowertool logger integration', () => {
 
     it('adds the context to log messages when the feature is enabled in the Middy.js middleware', async () => {
       // Prepare
-      app = Fastify();
+      app = Fastify({ logger: false });
       logger = new Logger();
-      app.register(fastifyAwsPowertoolsLoggerPlugin, {
-        logger,
-      });
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger,
+        })
+        .get('/', async (request, reply) => {
+          request.logger.info('Hello, world!');
+        });
       proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
       handler = async (event, context) => proxy(event, context);
