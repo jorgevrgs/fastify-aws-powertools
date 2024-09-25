@@ -4,13 +4,10 @@ import fp from 'fastify-plugin';
 import { tracerHook } from '../hooks';
 import type { FastifyAwsPowertoolsTracerOptions } from '../types';
 
-
 const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
   FastifyAwsPowertoolsTracerOptions
 > = async (fastify, opts) => {
-  const {
-    tracerOptions = {},
-  } = opts;
+  const { tracerOptions = {} } = opts;
 
   let tracer: Tracer;
 

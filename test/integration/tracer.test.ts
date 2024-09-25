@@ -12,7 +12,7 @@ import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fastifyAwsPowertoolsTracerPlugin } from '../../src';
-import { invokeCleanUpFunctions } from '../../src/helpers';
+import { invokeCleanUpFunctions } from '../../src/commons/helpers';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -61,7 +61,7 @@ describe('fastifyAwsPowertool tracer integration', () => {
     vi.clearAllMocks();
   });
 
-  it('should be register a plugin', () => {
+  it('should be registered', () => {
     expect(app.hasPlugin('fastify-aws-powertools-tracer')).toBe(true);
   });
 

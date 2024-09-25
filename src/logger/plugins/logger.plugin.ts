@@ -7,9 +7,7 @@ import type { FastifyAwsPowertoolsLoggerOptions } from '../types';
 const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
   FastifyAwsPowertoolsLoggerOptions
 > = async (fastify, opts) => {
-  const {
-    loggerOptions = {},
-  } = opts;
+  const { loggerOptions = {} } = opts;
 
   let logger: Logger;
 
@@ -24,7 +22,6 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     .decorate('logger', logger)
     .register(fp(loggerHook), { logger, loggerOptions });
 };
-
 
 export const fastifyAwsPowertoolsLoggerPlugin = fp(fastifyAwsPowertoolsLogger, {
   name: 'fastify-aws-powertools-logger',

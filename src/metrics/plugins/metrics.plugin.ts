@@ -7,9 +7,7 @@ import type { FastifyAwsPowertoolsMetricsOptions } from '../types';
 const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
   FastifyAwsPowertoolsMetricsOptions
 > = async (fastify, opts) => {
-  const {
-    metricsOptions = {},
-  } = opts;
+  const { metricsOptions = {} } = opts;
 
   let metrics: Metrics;
 

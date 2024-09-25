@@ -6,8 +6,8 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import { METRICS_KEY, POWERTOOLS_REQUEST_KEY } from '../constants';
-import { isAwsLambdaRequest } from '../helpers';
+import { isAwsLambdaRequest } from '../../commons/helpers';
+import { METRICS_KEY, POWERTOOLS_REQUEST_KEY } from '../../commons/symbols';
 
 export function metricsService(
   target: Metrics | Metrics[],

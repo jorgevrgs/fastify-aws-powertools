@@ -6,8 +6,8 @@ import type {
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
 } from 'fastify';
-import { LOGGER_KEY, POWERTOOLS_REQUEST_KEY } from '../constants';
-import { isAwsLambdaRequest } from '../helpers';
+import { isAwsLambdaRequest } from '../../commons/helpers';
+import { LOGGER_KEY, POWERTOOLS_REQUEST_KEY } from '../../commons/symbols';
 
 export function loggerService(
   target: Logger | Logger[],

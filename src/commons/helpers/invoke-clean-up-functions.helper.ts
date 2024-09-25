@@ -4,8 +4,8 @@ import {
   METRICS_KEY,
   POWERTOOLS_REQUEST_KEY,
   TRACER_KEY,
-} from '../constants';
-import { isNotNullObject } from './is-aws-lambda-request';
+} from '../symbols';
+import { isNotNullObject } from './is-not-null-object.helper';
 
 export const invokeCleanUpFunctions = async (request: FastifyRequest) => {
   const cleanupFunctionNames = [LOGGER_KEY, METRICS_KEY, TRACER_KEY];

@@ -8,7 +8,7 @@ import type {
   onResponseAsyncHookHandler,
   onSendAsyncHookHandler,
 } from 'fastify';
-import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../constants';
+import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../../commons/symbols';
 
 export function tracerService(
   target: Tracer,

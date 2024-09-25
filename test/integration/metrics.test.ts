@@ -13,7 +13,7 @@ import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fastifyAwsPowertoolsMetricsPlugin } from '../../src';
-import { invokeCleanUpFunctions } from '../../src/helpers';
+import { invokeCleanUpFunctions } from '../../src/commons/helpers';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -80,7 +80,7 @@ describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
     await app.close();
   });
 
-  it('should be a plugin', () => {
+  it('should be registered', () => {
     expect(app.hasPlugin('fastify-aws-powertools-metrics')).toBe(true);
   });
 
