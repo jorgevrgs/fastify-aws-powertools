@@ -15,5 +15,6 @@ export default defineConfig({
     coverage: {
       reporter: ['html-spa'],
     },
+    setupFiles: 'test/globalSetup.ts',
   },
 });

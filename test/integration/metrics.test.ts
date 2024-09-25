@@ -34,14 +34,6 @@ describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ now: 1466424490000 });
 
-    vi.stubEnv(
-      '_X_AMZN_TRACE_ID',
-      'Root=1-5759e988-bd862e3fe1be46a994272793;Parent=557abcec3ee5a047;Sampled=1',
-    );
-    vi.stubEnv('AWS_LAMBDA_FUNCTION_NAME', 'my-lambda-function');
-    vi.stubEnv('AWS_LAMBDA_FUNCTION_MEMORY_SIZE', '128');
-    vi.stubEnv('POWERTOOLS_METRICS_NAMESPACE', 'hello-world');
-
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     vi.spyOn(console, 'warn').mockImplementation(vi.fn());
@@ -74,9 +66,6 @@ describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    vi.restoreAllMocks();
-    vi.unstubAllEnvs();
-
     await app.close();
   });
 
