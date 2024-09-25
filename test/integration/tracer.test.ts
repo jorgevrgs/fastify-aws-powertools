@@ -16,7 +16,7 @@ import { invokeCleanUpFunctions } from '../../src/commons/helpers';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
-describe('fastifyAwsPowertool tracer integration', () => {
+describe('fastifyAwsPowertoolsTracerPlugin', () => {
   let app: FastifyInstance;
   let proxy: PromiseHandler;
   let handler: PromiseHandler;

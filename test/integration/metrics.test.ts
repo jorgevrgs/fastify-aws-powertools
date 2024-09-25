@@ -17,14 +17,12 @@ import { invokeCleanUpFunctions } from '../../src/commons/helpers';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
-describe('fastifyAwsPowertoolsMetricsPlugin metrics integration', () => {
+describe('fastifyAwsPowertoolsMetricsPlugin', () => {
   let app: FastifyInstance;
   let metrics: Metrics;
   let proxy: PromiseHandler;
   let handler: PromiseHandler;
   let consoleLogSpy: MockInstance;
-  // let consoleErrorSpy: SpyInstance;
-  // let consoleWarnSpy: SpyInstance;
 
   const event = {
     foo: 'bar',

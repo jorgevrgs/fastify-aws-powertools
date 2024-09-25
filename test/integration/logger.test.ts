@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fastifyAwsPowertoolsLoggerPlugin } from '../../src';
 import { dummyContext } from '../fixtures/context';
 
-describe('fastifyAwsPowertoolsLoggerPlugin logger integration', () => {
+describe('fastifyAwsPowertoolsLoggerPlugin', () => {
   let app: FastifyInstance;
   let proxy: PromiseHandler;
   let handler: PromiseHandler<APIGatewayProxyEventV2>;
