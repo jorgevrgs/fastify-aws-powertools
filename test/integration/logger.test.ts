@@ -181,7 +181,7 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
           logger,
         })
         .get('/', async (request, reply) => {
-          //
+          request.logger.info('Hello, world 2!');
         });
       proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
@@ -212,11 +212,17 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       await handler(event, dummyContext);
 
       // Assess
-      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledTimes(2);
       expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
         expect.objectContaining({
           message: 'Hello, world!',
           ...getContextLogEntries(),
+        }),
+      );
+      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world 2!',
+          ...getContextLogEntries({ cold_start: false }),
         }),
       );
     });
