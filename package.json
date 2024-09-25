@@ -1,7 +1,7 @@
 {
   "name": "fastify-aws-powertools",
   "version": "0.0.16",
-  "description": "",
+  "description": "Fastify plugin to use AWS Powertools",
   "exports": {
     "node": {
       "require": "./dist/cjs/index.js",

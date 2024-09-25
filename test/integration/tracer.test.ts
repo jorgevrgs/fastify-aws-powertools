@@ -11,8 +11,10 @@ import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fastifyAwsPowertoolsTracerPlugin } from '../../src';
-import { invokeCleanUpFunctions } from '../../src/commons/helpers';
+import {
+  fastifyAwsPowertoolsTracerPlugin,
+  invokeCleanUpFunctions,
+} from '../../src';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
@@ -45,9 +47,6 @@ describe('fastifyAwsPowertoolsTracerPlugin', () => {
   });
 
   afterEach(async () => {
-    vi.unstubAllEnvs();
-    vi.clearAllMocks();
-
     await app.close();
   });
 

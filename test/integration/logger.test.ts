@@ -32,6 +32,7 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
 
   beforeEach(() => {
     vi.stubEnv('POWERTOOLS_LOG_LEVEL', 'DEBUG');
+    vi.stubEnv('POWERTOOLS_DEV', 'true');
 
     logSpy = vi.spyOn(console, 'info');
   });
@@ -59,13 +60,17 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       // Prepare
       logger = new Logger();
 
+      console.warn('calls --> ', logSpy.mock.calls);
+
       // Act
       logger.addContext(dummyContext);
       logger.info('Hello, world!');
 
       // Assess
-      expect(logSpy).toHaveBeenCalledTimes(1);
-      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+      expect(vi.mocked(console.info)).toHaveBeenCalledTimes(1);
+      expect(
+        JSON.parse(vi.mocked(console.info).mock.calls[0][0]),
+      ).toStrictEqual(
         expect.objectContaining({
           message: 'Hello, world!',
           ...getContextLogEntries(),
@@ -101,7 +106,7 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
 
     it('adds the context to log messages when the feature is enabled in the Middy.js middleware', async () => {
       // Prepare
-      app = Fastify({ logger: false });
+      app = Fastify();
       logger = new Logger();
       app
         .register(fastifyAwsPowertoolsLoggerPlugin, {
@@ -119,7 +124,7 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       await handler(event, dummyContext);
 
       // Assess
-      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledOnce();
       expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
         expect.objectContaining({
           message: 'Hello, world!',

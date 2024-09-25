@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, vi } from 'vitest';
 
 beforeEach(() => {
+  vi.spyOn(console, 'error').mockImplementation(vi.fn());
+  vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+  vi.spyOn(console, 'info').mockImplementation(vi.fn());
+  vi.spyOn(console, 'debug').mockImplementation(vi.fn());
+  vi.spyOn(console, 'log').mockImplementation(vi.fn());
+
   vi.mock('node:console', () => ({
     ...vi.importActual('node:console'),
     Console: vi.fn().mockImplementation(() => ({

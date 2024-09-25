@@ -12,8 +12,10 @@ import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fastifyAwsPowertoolsMetricsPlugin } from '../../src';
-import { invokeCleanUpFunctions } from '../../src/commons/helpers';
+import {
+  fastifyAwsPowertoolsMetricsPlugin,
+  invokeCleanUpFunctions,
+} from '../../src';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
