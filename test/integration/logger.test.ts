@@ -104,7 +104,7 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       );
     });
 
-    it('adds the context to log messages when the feature is enabled in the Middy.js middleware', async () => {
+    it('adds the context to log messages when the feature is enabled in the Fastify plugin', async () => {
       // Prepare
       app = Fastify();
       logger = new Logger();
@@ -128,6 +128,46 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
         expect.objectContaining({
           message: 'Hello, world!',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
+
+    it('adds the context to the messages of each logger instance', async () => {
+      // Prepare
+      const logger1 = new Logger({ serviceName: 'parent' });
+      const logger2 = logger1.createChild({ serviceName: 'child' });
+      app = Fastify();
+      logger = new Logger();
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger: [logger1, logger2],
+        })
+        .get('/', async (request, reply) => {
+          request.logger.info('Hello, world!');
+          logger2.info('Hello, world!');
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'parent',
+          ...getContextLogEntries(),
+        }),
+      );
+      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'child',
           ...getContextLogEntries(),
         }),
       );
