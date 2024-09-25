@@ -1,5 +1,5 @@
 import type { Context } from 'aws-lambda';
-import type { RequestWithAwsLambda } from '../../types';
+import type { RequestWithAwsLambda } from '../types';
 import { isNotNullObject } from './is-not-null-object.helper';
 
 export const isAwsLambdaRequest = <TEvent = unknown, TContext = Context>(
