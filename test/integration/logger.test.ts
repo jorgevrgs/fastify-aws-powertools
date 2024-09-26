@@ -1,85 +1,250 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import type { PromiseHandler } from '@fastify/aws-lambda';
 import awsLambdaFastify from '@fastify/aws-lambda';
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import type { APIGatewayProxyEventV2, Context } from 'aws-lambda';
+import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
-import fp from 'fastify-plugin';
+import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import fastifyAwsPowertool from '../../src';
+import { fastifyAwsPowertoolsLoggerPlugin } from '../../src';
 import { dummyContext } from '../fixtures/context';
-import { dummyEvent } from '../fixtures/event';
 
-vi.spyOn(console, 'log').mockImplementation(vi.fn);
-
-describe('fastifyAwsPowertool logger integration', () => {
+describe('fastifyAwsPowertoolsLoggerPlugin', () => {
   let app: FastifyInstance;
   let proxy: PromiseHandler;
   let handler: PromiseHandler<APIGatewayProxyEventV2>;
   let logger: Logger;
-  let plugin: FastifyPluginAsync;
 
-  beforeEach(async () => {
-    vi.useFakeTimers();
+  const getContextLogEntries = (overrides?: Record<string, unknown>) => ({
+    function_arn: dummyContext.invokedFunctionArn,
+    function_memory_size: dummyContext.memoryLimitInMB,
+    function_name: dummyContext.functionName,
+    function_request_id: dummyContext.awsRequestId,
+    cold_start: true,
+    ...overrides,
+  });
 
-    plugin = async (instance) => {
-      instance.get('/', async (request, _reply) => {
-        request.logger?.info('This is an INFO log with some context');
+  let logSpy: MockInstance<Console['info']>;
 
-        return 'OK';
-      });
-    };
+  const event = {
+    foo: 'bar',
+  } as unknown as APIGatewayProxyEventV2;
 
+  beforeEach(() => {
+    vi.stubEnv('POWERTOOLS_LOG_LEVEL', 'DEBUG');
+    vi.stubEnv('POWERTOOLS_DEV', 'true');
+
+    logSpy = vi.spyOn(console, 'info');
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should be registered', async () => {
     app = Fastify();
     logger = new Logger();
-    app
-      .register(
-        fp(fastifyAwsPowertool, {
-          name: 'powertools',
-        }),
-        {
-          logger,
-        },
-      )
-      .register(
-        fp(plugin, {
-          name: 'routes',
-          dependencies: ['powertools'],
-          decorators: {
-            request: ['logger'],
-          },
-        }),
-      );
+    app.register(fastifyAwsPowertoolsLoggerPlugin, {
+      logger,
+    });
     proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
 
     handler = async (event, context) => proxy(event, context);
     await app.ready();
+
+    expect(app.hasPlugin('fastify-aws-powertools-logger')).toBeTruthy();
   });
 
-  afterEach(async () => {
-    vi.useRealTimers();
-    vi.restoreAllMocks();
+  describe('Inject Lambda Context', () => {
+    it('adds the context to log messages when the feature is enabled', () => {
+      // Prepare
+      logger = new Logger();
 
-    await app.close();
-  });
+      console.warn('calls --> ', logSpy.mock.calls);
 
-  it('should be a function', () => {
-    expect(fastifyAwsPowertool).to.be.instanceOf(Function);
-  });
+      // Act
+      logger.addContext(dummyContext);
+      logger.info('Hello, world!');
 
-  it('when a logger object is passed, it adds the context to the logger instance', async () => {
-    const getRandomInt = (): number => Math.floor(Math.random() * 1000000000);
-
-    const awsRequestId = getRandomInt().toString();
-
-    await handler(dummyEvent, {
-      ...dummyContext,
-      awsRequestId,
+      // Assess
+      expect(vi.mocked(console.info)).toHaveBeenCalledTimes(1);
+      expect(
+        JSON.parse(vi.mocked(console.info).mock.calls[0][0]),
+      ).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          ...getContextLogEntries(),
+        }),
+      );
     });
 
-    expect(logger).toHaveProperty(
-      ['powertoolsLogData', 'lambdaContext', 'awsRequestId'],
-      awsRequestId,
-    );
+    it('replaces the context when a new context is added', () => {
+      // Prepare
+      const logger = new Logger();
+
+      // Act
+      logger.addContext(dummyContext);
+      logger.info('Hello, world!');
+      logger.addContext({
+        ...dummyContext,
+        awsRequestId: 'c6af9ac6-7b61-11e6-9a41-93e812345679',
+      });
+      logger.info('Hello, world!');
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          ...getContextLogEntries({
+            function_request_id: 'c6af9ac6-7b61-11e6-9a41-93e812345679',
+            cold_start: false,
+          }),
+        }),
+      );
+    });
+
+    it('adds the context to log messages when the feature is enabled in the Fastify plugin', async () => {
+      // Prepare
+      logger = new Logger();
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger,
+        })
+        .get('/', async (request, reply) => {
+          request.logger.info('Hello, world!');
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledOnce();
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
+
+    it('adds the context to the messages of each logger instance', async () => {
+      // Prepare
+      const logger1 = new Logger({ serviceName: 'parent' });
+      const logger2 = logger1.createChild({ serviceName: 'child' });
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger: [logger1, logger2],
+        })
+        .get('/', async (request, reply) => {
+          request.logger.info('Hello, world!');
+          logger2.info('Hello, world!');
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      handler = async (event, context) => proxy(event, context);
+      await app.ready();
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'parent',
+          ...getContextLogEntries(),
+        }),
+      );
+      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'child',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
+
+    it('adds the context to the messages when the feature is enabled using the class method decorator', async () => {
+      // Prepare
+      const logger = new Logger();
+      app = Fastify();
+      app
+        .register(fastifyAwsPowertoolsLoggerPlugin, {
+          logger,
+        })
+        .get('/', async (request, reply) => {
+          request.logger.info('Hello, world 2!');
+        });
+      proxy = awsLambdaFastify<APIGatewayProxyEventV2>(app);
+
+      await app.ready();
+
+      class Test {
+        readonly #greeting: string;
+
+        public constructor(greeting: string) {
+          this.#greeting = greeting;
+        }
+
+        @logger.injectLambdaContext()
+        async handler(_event: unknown, context: Context) {
+          this.logGreeting();
+
+          proxy(event, context);
+        }
+
+        logGreeting() {
+          logger.info(this.#greeting);
+        }
+      }
+      const lambda = new Test('Hello, world!');
+      const handler = lambda.handler.bind(lambda);
+
+      // Act
+      await handler(event, dummyContext);
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          ...getContextLogEntries(),
+        }),
+      );
+      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world 2!',
+          ...getContextLogEntries({ cold_start: false }),
+        }),
+      );
+    });
+
+    it('propagates the context data to the child logger instances', () => {
+      // Prepare
+      const logger = new Logger();
+
+      // Act
+      logger.addContext(dummyContext);
+      const childLogger = logger.createChild({ serviceName: 'child' });
+      childLogger.info('Hello, world!');
+
+      // Assess
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+        expect.objectContaining({
+          message: 'Hello, world!',
+          service: 'child',
+          ...getContextLogEntries(),
+        }),
+      );
+    });
   });
 });

@@ -1,7 +1,7 @@
 {
   "name": "fastify-aws-powertools",
-  "version": "0.0.16",
-  "description": "",
+  "version": "0.0.17",
+  "description": "Fastify plugin to use AWS Powertools",
   "exports": {
     "node": {
       "require": "./dist/cjs/index.js",
@@ -45,13 +45,14 @@
     "@types/aws-lambda": "^8.10.104",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
+    "@vitest/coverage-v8": "^2.1.1",
     "aws-lambda": "^1.0.7",
     "aws-xray-sdk-core": "^3.10.1",
     "fastify": "^4.28.1",
     "pino": "^9.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.1"
   },
   "peerDependencies": {
     "@fastify/aws-lambda": "^3.1.3",
