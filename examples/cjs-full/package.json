@@ -1,0 +1,20 @@
+{
+  "name": "cjs-full",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "2.8.0",
+    "@aws-lambda-powertools/metrics": "2.8.0",
+    "@aws-lambda-powertools/tracer": "2.8.0",
+    "@fastify/aws-lambda": "^4.1.0",
+    "fastify": "^4.28.1",
+    "fastify-aws-powertools": "file:../../"
+  }
+}

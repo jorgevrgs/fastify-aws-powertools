@@ -9,5 +9,5 @@
     "declarationDir": "dist/types",
     "experimentalDecorators": true
   },
-  "exclude": ["node_modules", "dist", "example"]
+  "exclude": ["node_modules", "dist", "examples"]
 }
