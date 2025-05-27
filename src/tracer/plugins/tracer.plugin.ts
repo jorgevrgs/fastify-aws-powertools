@@ -1,19 +1,30 @@
-import type { Tracer } from '@aws-lambda-powertools/tracer';
-import type { CaptureLambdaHandlerOptions } from '@aws-lambda-powertools/tracer/lib/cjs/types/Tracer';
+import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { Segment, Subsegment } from 'aws-xray-sdk-core';
 import type {
+  FastifyPluginAsync,
   FastifyRequest,
   onErrorAsyncHookHandler,
   onRequestAsyncHookHandler,
   onResponseAsyncHookHandler,
   onSendAsyncHookHandler,
 } from 'fastify';
-import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../constants';
+import fp from 'fastify-plugin';
+import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../../commons';
+import type { FastifyAwsPowertoolsTracerOptions } from '../types';
 
-export function tracerService(
-  target: Tracer,
-  options: CaptureLambdaHandlerOptions = {},
-) {
+const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
+  FastifyAwsPowertoolsTracerOptions
+> = async (fastify, opts) => {
+  const { tracerOptions: options = {} } = opts;
+
+  let tracer: Tracer;
+
+  if ('tracer' in opts) {
+    tracer = opts.tracer;
+  } else {
+    tracer = new Tracer(opts.tracerInstanceOptions);
+  }
+
   const { captureResponse = true } = options;
 
   let lambdaSegment: Segment;
@@ -27,7 +38,7 @@ export function tracerService(
   };
 
   const open = (): void => {
-    const segment = target.getSegment();
+    const segment = tracer.getSegment();
 
     if (segment === undefined) {
       return;
@@ -39,7 +50,7 @@ export function tracerService(
       `## ${process.env._HANDLER}`,
     );
 
-    target.setSegment(handlerSegment);
+    tracer.setSegment(handlerSegment);
   };
 
   const close = (): void => {
@@ -57,23 +68,23 @@ export function tracerService(
       );
     }
 
-    target.setSegment(lambdaSegment);
+    tracer.setSegment(lambdaSegment);
   };
 
   const onRequestHook: onRequestAsyncHookHandler = async (request, _reply) => {
-    if (!target.isTracingEnabled()) {
+    if (!tracer.isTracingEnabled()) {
       return;
     }
 
     open();
 
     setCleanupFunction(request);
-    target.annotateColdStart();
-    target.addServiceNameAnnotation();
+    tracer.annotateColdStart();
+    tracer.addServiceNameAnnotation();
   };
 
   const onResponseHook: onResponseAsyncHookHandler = async () => {
-    if (!target.isTracingEnabled()) {
+    if (!tracer.isTracingEnabled()) {
       return;
     }
 
@@ -85,7 +96,7 @@ export function tracerService(
     _reply,
     payload,
   ) => {
-    if (!target.isTracingEnabled()) {
+    if (!tracer.isTracingEnabled()) {
       return payload;
     }
 
@@ -98,7 +109,7 @@ export function tracerService(
         data = payload;
       }
 
-      target.addResponseAsMetadata(data, process.env._HANDLER);
+      tracer.addResponseAsMetadata(data, process.env._HANDLER);
     }
 
     return payload;
@@ -109,17 +120,28 @@ export function tracerService(
     _reply,
     error,
   ) => {
-    if (!target.isTracingEnabled()) {
+    if (!tracer.isTracingEnabled()) {
       return;
     }
 
-    target.addErrorAsMetadata(error as Error);
+    tracer.addErrorAsMetadata(error as Error);
   };
 
-  return {
-    onRequest: onRequestHook,
-    onSend: onSendHook,
-    onError: onErrorHook,
-    onResponse: onResponseHook,
-  };
-}
+  fastify
+    .decorateRequest('tracer', null)
+    .decorate('tracer', tracer)
+    .addHook('onRequest', async (request) => {
+      if (!request.tracer) {
+        request.tracer = tracer;
+      }
+    })
+    .addHook('onRequest', onRequestHook)
+    .addHook('onSend', onSendHook)
+    .addHook('onResponse', onResponseHook)
+    .addHook('onError', onErrorHook);
+};
+
+export const fastifyAwsPowertoolsTracerPlugin = fp(fastifyAwsPowertoolsTracer, {
+  name: 'fastify-aws-powertools-tracer',
+  fastify: '4.x',
+});

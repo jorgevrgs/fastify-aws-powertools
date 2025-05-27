@@ -12,5 +12,9 @@ export default defineConfig({
       '**/node_modules/**/*',
       '**/*.e2e-(test|spec).ts',
     ],
+    coverage: {
+      reporter: ['html-spa'],
+    },
+    setupFiles: 'test/globalSetup.ts',
   },
 });

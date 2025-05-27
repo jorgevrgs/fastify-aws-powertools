@@ -11,31 +11,21 @@ import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fastifyAwsPowertoolsTracerPlugin } from '../../src';
-import { invokeCleanUpFunctions } from '../../src/helpers';
+import {
+  fastifyAwsPowertoolsTracerPlugin,
+  invokeCleanUpFunctions,
+} from '../../src';
 import { dummyContext } from '../fixtures/context';
 import { dummyEvent } from '../fixtures/event';
 
-describe('fastifyAwsPowertool tracer integration', () => {
+describe('fastifyAwsPowertoolsTracerPlugin', () => {
   let app: FastifyInstance;
   let proxy: PromiseHandler;
   let handler: PromiseHandler;
   let tracer: Tracer;
 
   beforeEach(async () => {
-    /**
-     * @see https://github.com/aws-powertools/powertools-lambda-typescript/blob/main/packages/tracer/tests/helpers/populateEnvironmentVariables.ts
-     */
-    vi.stubEnv(
-      '_X_AMZN_TRACE_ID',
-      'Root=1-5759e988-bd862e3fe1be46a994272793;Parent=557abcec3ee5a047;Sampled=1',
-    );
-    vi.stubEnv('_HANDLER', 'index.handler');
-    vi.stubEnv('AWS_EXECUTION_ENV', 'AWS_Lambda_nodejs20.x');
-    vi.stubEnv('AWS_LAMBDA_FUNCTION_MEMORY_SIZE', '128');
-    vi.stubEnv('AWS_LAMBDA_FUNCTION_NAME', 'my-lambda-function');
     vi.stubEnv('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1');
-    vi.stubEnv('POWERTOOLS_SERVICE_NAME', 'hello-world');
     vi.stubEnv('AWS_XRAY_LOGGING_LEVEL', 'silent');
 
     tracer = new Tracer({ enabled: false });
@@ -56,12 +46,11 @@ describe('fastifyAwsPowertool tracer integration', () => {
     await app.ready();
   });
 
-  afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.clearAllMocks();
+  afterEach(async () => {
+    await app.close();
   });
 
-  it('should be register a plugin', () => {
+  it('should be registered', () => {
     expect(app.hasPlugin('fastify-aws-powertools-tracer')).toBe(true);
   });
 

@@ -1,7 +1,9 @@
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { fastifyAwsPowertoolsLoggerPlugin, fastifyAwsPowertoolsMetricsPlugin, fastifyAwsPowertoolsTracerPlugin } from './plugins';
-import type { FastifyAwsPowertoolsOptions } from './types';
+import type { FastifyAwsPowertoolsOptions } from './commons/types';
+import { fastifyAwsPowertoolsLoggerPlugin } from './logger';
+import { fastifyAwsPowertoolsMetricsPlugin } from './metrics';
+import { fastifyAwsPowertoolsTracerPlugin } from './tracer';
 
 export const fastifyAwsPowertools: FastifyPluginAsync<
   FastifyAwsPowertoolsOptions
