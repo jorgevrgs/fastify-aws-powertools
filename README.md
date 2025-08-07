@@ -6,6 +6,14 @@
 
 Implementation of a Fastify plugin of [AWS Lambda Powertools for Typescript](https://awslabs.github.io/aws-lambda-powertools-typescript/latest/) to take advantage of Logger, Metrics, and Tracer services for [AWS Lambda](https://aws.amazon.com/lambda/). Inspired by Middy middleware created by AWS Lambda Powertools team.
 
+## Versions
+
+<!-- a table to show v0 is for fastify@4 and v5 is for fastify@5 -->
+| fastify-aws-powertools | fastify | Node.js |
+|------------------------|---------|---------|
+| v0.x.x                 | 4.x.x   | 18.x, 20.x, 22.x |
+| v5.x.x                 | 5.x.x   | 20.x, 22.x, 24.x |
+
 ## Getting Started
 
 Install the dependency:
