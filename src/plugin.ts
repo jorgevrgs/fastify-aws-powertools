@@ -16,5 +16,5 @@ export const fastifyAwsPowertools: FastifyPluginAsync<
 
 export const fastifyAwsPowertoolsPlugin = fp(fastifyAwsPowertools, {
   name: 'fastify-aws-powertools',
-  fastify: '4.x',
+  fastify: '5.x',
 });
