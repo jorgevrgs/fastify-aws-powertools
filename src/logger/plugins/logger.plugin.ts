@@ -61,13 +61,12 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
   };
 
   fastify
-    .decorateRequest('logger', null)
-    .decorate('logger', loggers[0])
-    .addHook('onRequest', async (request) => {
-      if (!request.logger) {
-        request.logger = loggers[0];
-      }
+    .decorateRequest('logger', {
+      getter() {
+        return loggers[0];
+      },
     })
+    .decorate('logger', loggers[0])
     .addHook('onRequest', onRequestHook)
     .addHook('onResponse', onResponseOrErrorHandler)
     .addHook('onError', onResponseOrErrorHandler);

@@ -128,13 +128,12 @@ const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
   };
 
   fastify
-    .decorateRequest('tracer', null)
-    .decorate('tracer', tracer)
-    .addHook('onRequest', async (request) => {
-      if (!request.tracer) {
-        request.tracer = tracer;
-      }
+    .decorateRequest('tracer', {
+      getter() {
+        return tracer;
+      },
     })
+    .decorate('tracer', tracer)
     .addHook('onRequest', onRequestHook)
     .addHook('onSend', onSendHook)
     .addHook('onResponse', onResponseHook)

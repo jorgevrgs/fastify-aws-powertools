@@ -67,13 +67,12 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
   };
 
   fastify
-    .decorateRequest('metrics', null)
-    .decorate('metrics', metrics[0])
-    .addHook('onRequest', async (request) => {
-      if (!request.metrics) {
-        request.metrics = metrics[0];
-      }
+    .decorateRequest('metrics', {
+      getter() {
+        return metrics[0];
+      },
     })
+    .decorate('metrics', metrics[0])
     .addHook('onRequest', onRequestHook)
     .addHook('onResponse', onResponseOrErrorHandler)
     .addHook('onError', onResponseOrErrorHandler);
