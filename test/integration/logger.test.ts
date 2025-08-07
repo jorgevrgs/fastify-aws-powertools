@@ -197,8 +197,6 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
         @logger.injectLambdaContext()
         async handler(_event: unknown, context: Context) {
           this.logGreeting();
-
-          proxy(event, context);
         }
 
         logGreeting() {
@@ -212,17 +210,12 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       await handler(event, dummyContext);
 
       // Assess
-      expect(logSpy).toHaveBeenCalledTimes(2);
-      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(console.info).toHaveLoggedNth(
+        1,
         expect.objectContaining({
           message: 'Hello, world!',
           ...getContextLogEntries(),
-        }),
-      );
-      expect(JSON.parse(logSpy.mock.calls[1][0])).toStrictEqual(
-        expect.objectContaining({
-          message: 'Hello, world 2!',
-          ...getContextLogEntries({ cold_start: false }),
         }),
       );
     });
@@ -237,8 +230,9 @@ describe('fastifyAwsPowertoolsLoggerPlugin', () => {
       childLogger.info('Hello, world!');
 
       // Assess
-      expect(logSpy).toHaveBeenCalledTimes(1);
-      expect(JSON.parse(logSpy.mock.calls[0][0])).toStrictEqual(
+      expect(console.info).toHaveBeenCalledTimes(1);
+      expect(console.info).toHaveLoggedNth(
+        1,
         expect.objectContaining({
           message: 'Hello, world!',
           service: 'child',

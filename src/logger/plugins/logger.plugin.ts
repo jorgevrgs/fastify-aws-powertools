@@ -32,7 +32,7 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
   const setCleanupFunction = (request: FastifyRequest) => {
     request[POWERTOOLS_REQUEST_KEY] = {
       ...request[POWERTOOLS_REQUEST_KEY],
-      [LOGGER_KEY]: onResponseOrErrorHandler,
+      [LOGGER_KEY]: onResponseHandler,
     };
   };
 
@@ -47,14 +47,43 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     }
 
     for (const logger of loggers) {
+      logger.refreshSampleRateCalculation();
+
       logger.addContext(request.awsLambda.context);
       logger.logEventIfEnabled(request.awsLambda.event, logEvent);
+
+      if (options.correlationIdPath) {
+        logger.setCorrelationId(
+          request.awsLambda.event,
+          options.correlationIdPath,
+        );
+      }
     }
   };
 
-  const onResponseOrErrorHandler = () => {
-    if (isResetStateEnabled) {
-      for (const logger of loggers) {
+  const onResponseHandler = () => {
+    for (const logger of loggers) {
+      logger.clearBuffer();
+
+      if (isResetStateEnabled) {
+        logger.resetKeys();
+      }
+    }
+  };
+
+  const onErrorHandler = (error: unknown) => {
+    for (const logger of loggers) {
+      if (options.flushBufferOnUncaughtError) {
+        logger.flushBuffer();
+        logger.error({
+          message: 'Uncaught error detected, flushing log buffer before exit',
+          error,
+        });
+      } else {
+        logger.clearBuffer();
+      }
+
+      if (isResetStateEnabled) {
         logger.resetKeys();
       }
     }
@@ -68,8 +97,8 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     })
     .decorate('logger', loggers[0])
     .addHook('onRequest', onRequestHook)
-    .addHook('onResponse', onResponseOrErrorHandler)
-    .addHook('onError', onResponseOrErrorHandler);
+    .addHook('onResponse', onResponseHandler)
+    .addHook('onError', onErrorHandler);
 };
 
 export const fastifyAwsPowertoolsLoggerPlugin = fp(fastifyAwsPowertoolsLogger, {
