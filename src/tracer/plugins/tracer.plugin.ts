@@ -143,5 +143,5 @@ const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
 
 export const fastifyAwsPowertoolsTracerPlugin = fp(fastifyAwsPowertoolsTracer, {
   name: 'fastify-aws-powertools-tracer',
-  fastify: '4.x',
+  fastify: '5.x',
 });

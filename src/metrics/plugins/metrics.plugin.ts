@@ -83,6 +83,6 @@ export const fastifyAwsPowertoolsMetricsPlugin = fp(
   fastifyAwsPowertoolsMetrics,
   {
     name: 'fastify-aws-powertools-metrics',
-    fastify: '4.x',
+    fastify: '5.x',
   },
 );

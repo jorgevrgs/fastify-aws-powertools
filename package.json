@@ -33,30 +33,28 @@
   },
   "homepage": "https://github.com/jorgevrgs/fastify-aws-powertools#readme",
   "dependencies": {
-    "@aws-lambda-powertools/logger": "2.8.0",
-    "@aws-lambda-powertools/metrics": "2.8.0",
-    "@aws-lambda-powertools/tracer": "2.8.0",
-    "fastify-plugin": "^4.5.1"
+    "@aws-lambda-powertools/logger": "2.24.1",
+    "@aws-lambda-powertools/metrics": "2.24.1",
+    "@aws-lambda-powertools/tracer": "2.24.1",
+    "fastify-plugin": "^5.0.1"
   },
   "devDependencies": {
-    "@aws-lambda-powertools/commons": "2.8.0",
-    "@biomejs/biome": "^1.8.3",
-    "@fastify/aws-lambda": "^4.1.0",
-    "@tsconfig/recommended": "^1.0.1",
-    "@types/aws-lambda": "^8.10.104",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
-    "@vitest/coverage-v8": "^2.1.1",
+    "@aws-lambda-powertools/commons": "2.24.1",
+    "@biomejs/biome": "^1.9.4",
+    "@fastify/aws-lambda": "^6.0.0",
+    "@tsconfig/recommended": "^1.0.10",
+    "@types/aws-lambda": "^8.10.152",
+    "@vitest/coverage-v8": "^2.1.9",
     "aws-lambda": "^1.0.7",
-    "aws-xray-sdk-core": "^3.10.1",
-    "fastify": "^4.28.1",
-    "pino": "^9.3.2",
+    "aws-xray-sdk-core": "^3.10.3",
+    "fastify": "^5.0.0",
+    "pino": "^9.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
-    "vitest": "^2.1.1"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@fastify/aws-lambda": "^4.1.0",
-    "fastify": "^4.28.1"
+    "fastify": "^5.0.0"
   }
 }

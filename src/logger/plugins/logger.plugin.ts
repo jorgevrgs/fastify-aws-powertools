@@ -75,5 +75,5 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
 
 export const fastifyAwsPowertoolsLoggerPlugin = fp(fastifyAwsPowertoolsLogger, {
   name: 'fastify-aws-powertools-logger',
-  fastify: '4.x',
+  fastify: '5.x',
 });
