@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   MetricResolution,
   MetricUnit,
@@ -9,7 +10,6 @@ import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
-import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
