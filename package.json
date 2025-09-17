@@ -1,6 +1,6 @@
 {
   "name": "fastify-aws-powertools",
-  "version": "5.0.2",
+  "version": "5.0.1",
   "description": "Fastify plugin to use AWS Powertools",
   "exports": {
     "node": {
@@ -24,9 +24,7 @@
     "type": "git",
     "url": "git+https://github.com/jorgevrgs/fastify-aws-powertools.git"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "keywords": [],
   "author": "Jorge Vargas <jorgevargasla@gmail.com>",
   "license": "MIT",
