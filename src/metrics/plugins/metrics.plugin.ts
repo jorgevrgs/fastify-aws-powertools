@@ -60,7 +60,7 @@ const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
     setCleanupFunction(request);
   };
 
-  const onResponseOrErrorHandler = () => {
+  const onResponseOrErrorHandler = async () => {
     for (const metric of metrics) {
       metric.publishStoredMetrics();
     }

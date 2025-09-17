@@ -2,6 +2,9 @@
   "organizeImports": {
     "enabled": true
   },
+  "files": {
+    "ignore": ["**/dist", "**/node_modules"]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -9,8 +12,7 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 80,
-    "attributePosition": "auto",
-    "ignore": ["**/dist", "**/node_modules", "**/example"]
+    "attributePosition": "auto"
   },
   "linter": {
     "enabled": true,

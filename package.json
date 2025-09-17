@@ -24,9 +24,7 @@
     "type": "git",
     "url": "git+https://github.com/jorgevrgs/fastify-aws-powertools.git"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "keywords": [],
   "author": "Jorge Vargas <jorgevargasla@gmail.com>",
   "license": "MIT",
