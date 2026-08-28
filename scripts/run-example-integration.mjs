@@ -55,12 +55,14 @@ const loadHandler = async (dir) => {
   const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   const entry = join(dir, pkg.main);
 
+  const entryUrl = pathToFileURL(entry).href;
+
   if (pkg.type === 'module') {
-    const namespace = await import(pathToFileURL(entry).href);
+    const namespace = await import(entryUrl);
     return namespace.handler;
   }
 
-  return createRequire(import.meta.url)(entry).handler;
+  return createRequire(entryUrl)(entry).handler;
 };
 
 const runExample = async (relDir) => {

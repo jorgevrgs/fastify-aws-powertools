@@ -10,6 +10,6 @@
   "dependencies": {
     "@fastify/aws-lambda": "^6.1.1",
     "fastify": "^5.0.0",
-    "fastify-aws-powertools": "file:../../"
+    "fastify-aws-powertools": "workspace:*"
   }
 }

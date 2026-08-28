@@ -123,8 +123,5 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Install ${{ matrix.example }} example
-        run: pnpm install --dir examples/${{ matrix.example }}
-
       - name: Run ${{ matrix.example }} example
         run: pnpm test:examples examples/${{ matrix.example }}
