@@ -16,7 +16,9 @@
   "types": "./dist/types/index.d.ts",
   "scripts": {
     "prepublish": "pnpm run build",
-    "build": "tsc --project tsconfig.mjs.json && tsc --project tsconfig.cjs.json && node scripts/write-dual-package-json.mjs && node scripts/verify-package.mjs",
+    "build": "tsc --project tsconfig.mjs.json && tsc --project tsconfig.cjs.json && node scripts/write-dual-package-json.mjs",
+    "verify-package": "node scripts/verify-package.mjs",
+    "test:examples": "node scripts/run-example-integration.mjs",
     "lint": "biome lint .",
     "lint:fix": "pnpm biome check --write .",
     "test": "vitest --allowOnly",
@@ -32,6 +34,11 @@
   "keywords": [],
   "author": "Jorge Vargas <jorgevargasla@gmail.com>",
   "license": "MIT",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=11.24.0"
+  },
   "bugs": {
     "url": "https://github.com/jorgevrgs/fastify-aws-powertools/issues"
   },

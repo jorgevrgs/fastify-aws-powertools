@@ -1,17 +1,18 @@
 // @ts-check
 
 const fastify = require('fastify');
-const fastifyPowertools = require('fastify-aws-powertools');
 const fastifyAwsLambda = require('@fastify/aws-lambda');
+const {
+  fastifyAwsPowertoolsPlugin,
+} = require('fastify-aws-powertools');
 
 const app = fastify();
-app.register(fastifyPowertools);
+app.register(fastifyAwsPowertoolsPlugin);
 
-app.get('/', async (request, reply) => {
-  const segment = request.tracer.getSegment(); // This is the facade segment (the one that is created by AWS Lambda)
+app.get('/', async (request, _reply) => {
+  const segment = request.tracer.getSegment();
   let subsegment;
   if (segment) {
-    // Create subsegment for the function & set it as active
     subsegment = segment.addNewSubsegment(`## ${process.env._HANDLER}`);
     request.tracer.setSegment(subsegment);
   }
@@ -20,20 +21,18 @@ app.get('/', async (request, reply) => {
   request.metrics.addMetric('custom-metric', 'Count', 1);
 
   try {
-    // Add the response as metadata
     request.tracer.addResponseAsMetadata({}, process.env._HANDLER);
   } catch (err) {
-    // Add the error as metadata
     request.tracer.addErrorAsMetadata(err);
     throw err;
   } finally {
     if (segment && subsegment) {
-      // Close subsegment (the AWS Lambda one is closed automatically)
       subsegment.close();
-      // Set back the facade segment as active again
       request.tracer.setSegment(segment);
     }
   }
+
+  return { ok: true };
 });
 
 const proxy = fastifyAwsLambda(app);
