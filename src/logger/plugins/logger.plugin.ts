@@ -61,7 +61,7 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     }
   };
 
-  const onResponseHandler = () => {
+  const onResponseHandler = async () => {
     for (const logger of loggers) {
       logger.clearBuffer();
 
@@ -71,7 +71,7 @@ const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
     }
   };
 
-  const onErrorHandler = (error: unknown) => {
+  const onErrorHandler = async (error: unknown) => {
     for (const logger of loggers) {
       if (options.flushBufferOnUncaughtError) {
         logger.flushBuffer();
