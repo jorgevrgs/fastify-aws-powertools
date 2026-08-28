@@ -6,8 +6,8 @@ import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fastifyAwsPowertoolsLoggerPlugin } from '../../src';
-import { dummyContext } from '../fixtures/context';
+import { fastifyAwsPowertoolsLoggerPlugin } from '../../src/index.js';
+import { dummyContext } from '../fixtures/context.js';
 
 describe('fastifyAwsPowertoolsLoggerPlugin', () => {
   let app: FastifyInstance;

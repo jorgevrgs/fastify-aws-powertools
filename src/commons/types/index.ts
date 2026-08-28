@@ -1,1 +1,1 @@
-export type * from './common.type';
+export type * from './common.type.js';

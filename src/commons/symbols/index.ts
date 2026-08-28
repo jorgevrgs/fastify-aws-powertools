@@ -1,1 +1,1 @@
-export * from './plugin.symbol';
+export * from './plugin.symbol.js';

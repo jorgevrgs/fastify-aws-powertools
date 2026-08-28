@@ -1,16 +1,16 @@
 import { Tracer } from '@aws-lambda-powertools/tracer';
 import type { Segment, Subsegment } from 'aws-xray-sdk-core';
 import type {
-  FastifyPluginAsync,
-  FastifyRequest,
-  onErrorAsyncHookHandler,
-  onRequestAsyncHookHandler,
-  onResponseAsyncHookHandler,
-  onSendAsyncHookHandler,
+    FastifyPluginAsync,
+    FastifyRequest,
+    onErrorAsyncHookHandler,
+    onRequestAsyncHookHandler,
+    onResponseAsyncHookHandler,
+    onSendAsyncHookHandler,
 } from 'fastify';
 import fp from 'fastify-plugin';
-import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../../commons';
-import type { FastifyAwsPowertoolsTracerOptions } from '../types';
+import { POWERTOOLS_REQUEST_KEY, TRACER_KEY } from '../../commons/index.js';
+import type { FastifyAwsPowertoolsTracerOptions } from '../types/index.js';
 
 const fastifyAwsPowertoolsTracer: FastifyPluginAsync<
   FastifyAwsPowertoolsTracerOptions

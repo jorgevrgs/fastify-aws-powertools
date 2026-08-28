@@ -1,16 +1,16 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import type {
-  FastifyPluginAsync,
-  FastifyRequest,
-  onRequestAsyncHookHandler,
+    FastifyPluginAsync,
+    FastifyRequest,
+    onRequestAsyncHookHandler,
 } from 'fastify';
 import fp from 'fastify-plugin';
 import {
-  LOGGER_KEY,
-  POWERTOOLS_REQUEST_KEY,
-  isAwsLambdaRequest,
-} from '../../commons';
-import type { FastifyAwsPowertoolsLoggerOptions } from '../types';
+    LOGGER_KEY,
+    POWERTOOLS_REQUEST_KEY,
+    isAwsLambdaRequest,
+} from '../../commons/index.js';
+import type { FastifyAwsPowertoolsLoggerOptions } from '../types/index.js';
 
 const fastifyAwsPowertoolsLogger: FastifyPluginAsync<
   FastifyAwsPowertoolsLoggerOptions

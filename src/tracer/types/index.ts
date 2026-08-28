@@ -1,1 +1,1 @@
-export type * from './tracer.type';
+export type * from './tracer.type.js';

@@ -1,0 +1,7 @@
+packages:
+  - examples/*
+
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+  aws-sdk: false
