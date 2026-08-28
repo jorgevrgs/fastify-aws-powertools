@@ -14,9 +14,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   fastifyAwsPowertoolsTracerPlugin,
   invokeCleanUpFunctions,
-} from '../../src';
-import { dummyContext } from '../fixtures/context';
-import { dummyEvent } from '../fixtures/event';
+} from '../../src/index.js';
+import { dummyContext } from '../fixtures/context.js';
+import { dummyEvent } from '../fixtures/event.js';
 
 describe('fastifyAwsPowertoolsTracerPlugin', () => {
   let app: FastifyInstance;

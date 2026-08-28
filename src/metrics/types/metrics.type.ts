@@ -1,8 +1,8 @@
 import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type {
-  ExtraOptions,
-  MetricsOptions,
-} from '@aws-lambda-powertools/metrics/lib/cjs/types/Metrics';
+    ExtraOptions,
+    MetricsOptions,
+} from '@aws-lambda-powertools/metrics/types';
 
 export interface MetricRecord {
   Name: string;

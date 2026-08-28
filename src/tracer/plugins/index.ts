@@ -1,1 +1,1 @@
-export * from './tracer.plugin';
+export * from './tracer.plugin.js';

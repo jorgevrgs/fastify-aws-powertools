@@ -9,8 +9,8 @@ import {
   METRICS_KEY,
   POWERTOOLS_REQUEST_KEY,
   isAwsLambdaRequest,
-} from '../../commons';
-import type { FastifyAwsPowertoolsMetricsOptions } from '../types';
+} from '../../commons/index.js';
+import type { FastifyAwsPowertoolsMetricsOptions } from '../types/index.js';
 
 const fastifyAwsPowertoolsMetrics: FastifyPluginAsync<
   FastifyAwsPowertoolsMetricsOptions

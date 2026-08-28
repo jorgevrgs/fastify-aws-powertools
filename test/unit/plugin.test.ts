@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
 import { beforeEach, describe, expect, it } from 'vitest';
-import fastifyAwsPowertool from '../../src';
+import fastifyAwsPowertool from '../../src/index.js';
 
 describe('fastifyAwsPowertool unit', () => {
   let app: FastifyInstance;

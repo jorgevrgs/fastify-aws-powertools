@@ -4,8 +4,8 @@ import {
   METRICS_KEY,
   POWERTOOLS_REQUEST_KEY,
   TRACER_KEY,
-} from '../symbols';
-import { isNotNullObject } from './is-not-null-object.helper';
+} from '../symbols/index.js';
+import { isNotNullObject } from './is-not-null-object.helper.js';
 
 export const invokeCleanUpFunctions = async (request: FastifyRequest) => {
   const cleanupFunctionNames = [LOGGER_KEY, METRICS_KEY, TRACER_KEY];

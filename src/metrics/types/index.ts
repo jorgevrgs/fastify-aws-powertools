@@ -1,1 +1,1 @@
-export type * from './metrics.type';
+export type * from './metrics.type.js';

@@ -3,15 +3,15 @@ import type { Metrics } from '@aws-lambda-powertools/metrics';
 import type { Tracer } from '@aws-lambda-powertools/tracer';
 import type { Context } from 'aws-lambda';
 import type { FastifyRequest } from 'fastify';
-import type { FastifyAwsPowertoolsLoggerOptions } from '../../logger';
-import type { FastifyAwsPowertoolsMetricsOptions } from '../../metrics';
-import type { FastifyAwsPowertoolsTracerOptions } from '../../tracer';
+import type { FastifyAwsPowertoolsLoggerOptions } from '../../logger/index.js';
+import type { FastifyAwsPowertoolsMetricsOptions } from '../../metrics/index.js';
+import type { FastifyAwsPowertoolsTracerOptions } from '../../tracer/index.js';
 import {
   LOGGER_KEY,
   METRICS_KEY,
   POWERTOOLS_REQUEST_KEY,
   TRACER_KEY,
-} from '../symbols';
+} from '../symbols/index.js';
 
 declare module 'fastify' {
   interface FastifyInstance {

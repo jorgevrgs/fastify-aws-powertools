@@ -1,1 +1,1 @@
-export * from './metrics.plugin';
+export * from './metrics.plugin.js';

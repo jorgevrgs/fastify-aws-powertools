@@ -1,2 +1,2 @@
-export * from './plugins';
-export type * from './types';
+export * from './plugins/index.js';
+export type * from './types/index.js';

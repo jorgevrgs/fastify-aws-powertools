@@ -1,11 +1,11 @@
-export * from './commons/helpers';
-export type * from './commons/types';
-export * from './logger';
-export * from './logger/classes';
-export * from './metrics';
+export * from './commons/helpers/index.js';
+export type * from './commons/types/index.js';
+export * from './logger/index.js';
+export * from './logger/classes/index.js';
+export * from './metrics/index.js';
 export {
   fastifyAwsPowertools as default,
   fastifyAwsPowertools,
   fastifyAwsPowertoolsPlugin,
-} from './plugin';
-export * from './tracer';
+} from './plugin.js';
+export * from './tracer/index.js';

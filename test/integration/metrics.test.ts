@@ -1,8 +1,7 @@
-import { randomUUID } from 'node:crypto';
 import {
-  MetricResolution,
-  MetricUnit,
-  Metrics,
+    MetricResolution,
+    MetricUnit,
+    Metrics,
 } from '@aws-lambda-powertools/metrics';
 import type { ExtraOptions } from '@aws-lambda-powertools/metrics/types';
 import type { PromiseHandler } from '@fastify/aws-lambda';
@@ -10,14 +9,15 @@ import awsLambdaFastify from '@fastify/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import type { FastifyInstance } from 'fastify';
 import Fastify from 'fastify';
+import { randomUUID } from 'node:crypto';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  fastifyAwsPowertoolsMetricsPlugin,
-  invokeCleanUpFunctions,
-} from '../../src';
-import { dummyContext } from '../fixtures/context';
-import { dummyEvent } from '../fixtures/event';
+    fastifyAwsPowertoolsMetricsPlugin,
+    invokeCleanUpFunctions,
+} from '../../src/index.js';
+import { dummyContext } from '../fixtures/context.js';
+import { dummyEvent } from '../fixtures/event.js';
 
 describe('fastifyAwsPowertoolsMetricsPlugin', () => {
   let app: FastifyInstance;
